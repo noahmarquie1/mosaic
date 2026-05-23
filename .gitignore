@@ -1,1 +1,4 @@
 *.pyc
+*.tsv
+*.h5ad
+*.csv

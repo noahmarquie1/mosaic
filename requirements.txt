@@ -6,4 +6,5 @@ plotly==5.24.1
 scikit-learn==1.8.0
 scipy==1.17.1
 snapatac2==2.8.0
+scanpy==1.12.1
 
