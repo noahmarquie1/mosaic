@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-from collections import Counter
-import gzip
+from pathlib import Path
 from scipy.stats import pearsonr
 
 
 def evaluate_deconvolution(estimated_proportions: pd.Series, true_proportions: pd.Series) -> dict:
-    # Compute error metrics
     errors = estimated_proportions - true_proportions
     abs_errors = np.abs(errors)
     squared_errors = errors ** 2
@@ -14,7 +12,7 @@ def evaluate_deconvolution(estimated_proportions: pd.Series, true_proportions: p
     rmse = np.sqrt(squared_errors.mean())
     mae = abs_errors.mean()
     max_error = abs_errors.max()
-    pcc = pearsonr(true_proportions.values, estimated_proportions.values).pvalue
+    pcc = pearsonr(true_proportions.values, estimated_proportions.values).statistic
 
     print("─" * 70)
     print(f"\nError Metrics:")
@@ -36,46 +34,31 @@ def evaluate_deconvolution(estimated_proportions: pd.Series, true_proportions: p
 
 
 def get_true_proportions(
-        fragments_file: str,
-        mapping: pd.Series,
-        max_fragments: int = None,
-        batch_size: int = 100_000,
+        fragments_dir: str | Path,
+        cell_type_col: str = "cell_type",
+        drop_unknown: bool = True,
+        unknown_label: str = "Unknown",
+        metadata_glob: str = "*-metadata.csv",
     ) -> pd.Series:
 
-    counts = Counter()
-    barcodes_batch: list[str] = []
+    fragments_dir = Path(fragments_dir)
+    files = list(fragments_dir.glob(metadata_glob))
+    if not files:
+        raise FileNotFoundError(
+            f"No files matching '{metadata_glob}' found in {fragments_dir}"
+        )
 
-    n = 0
-    with gzip.open(fragments_file, "rt", encoding='utf-8') as fh:
-        for line in fh:
-            if line.startswith("#"):
-                continue
+    meta = pd.concat([pd.read_csv(f, index_col=0) for f in files])
 
-            parts = line.rstrip("\n").split("\t")
-            if len(parts) >= 4:
-                barcodes_batch.append(parts[3])
+    if cell_type_col not in meta.columns:
+        raise ValueError(
+            f"Column '{cell_type_col}' not found. "
+            f"Available columns: {list(meta.columns)}"
+        )
 
-            n += 1
-            if max_fragments is not None and n >= max_fragments:
-                break
+    labels = meta[cell_type_col]
 
-            if len(barcodes_batch) >= batch_size:
-                for bc in barcodes_batch:
-                    ct = mapping.get(bc)
-                    if ct is not None:
-                        counts[ct] += 1
-                barcodes_batch.clear()
+    if drop_unknown:
+        labels = labels[~labels.str.contains(unknown_label, case=False, na=False)]
 
-    # Finish the last batch
-    if barcodes_batch:
-        for bc in barcodes_batch:
-            ct = mapping.get(bc)
-            if ct is not None:
-                counts[ct] += 1
-
-    total = sum(counts.values())
-    if total == 0:
-        print("Warning: No matched barcodes found!")
-        return pd.Series(dtype=float)
-
-    return pd.Series(dict(counts), dtype=float) / total
+    return labels.value_counts(normalize=True).rename("proportion")

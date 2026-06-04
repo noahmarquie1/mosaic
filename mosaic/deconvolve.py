@@ -14,10 +14,6 @@ def nnls_deconvolve(signature_matrix: pd.DataFrame,
         f = f / f.sum()
 
     proportions = pd.Series(f, index=signature_matrix.columns)
-
-    print_proportions(proportions)
-    print(f"\n  Residual: {residual:.4f}")
-
     return proportions
 
 
@@ -52,11 +48,17 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
     return proportions
 
 
-def print_proportions(proportions: pd.Series):
+def print_proportions(proportions: pd.Series, top_n=None):
     print("\nEstimated cell type proportions:")
     print("─" * 35)
+
+    n = 0
     for cell_type, proportion in proportions.sort_values(ascending=False).items():
         bar = "█" * int(proportion * 40)
-        print(f"  {cell_type:<25} {proportion:.4f}  {bar}")
+        print(f"  {cell_type:<30} {proportion:.4f}  {bar}")
+        n += 1
+        if n == top_n:
+            break
+
     print("─" * 35)
     print(f"  {'Total':<25} {proportions.sum():.4f}")

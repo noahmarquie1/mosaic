@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def construct_signature(adata_list, dest, cell_type_col='cluster_label',
                         min_cells=50, top_n_variable=5000):
 
@@ -15,6 +16,9 @@ def construct_signature(adata_list, dest, cell_type_col='cluster_label',
     for i, adata in enumerate(adata_list):
         print(f"Processing dataset {i+1}/{len(adata_list)}...")
         for ct in adata.obs[cell_type_col].dropna().unique():
+            if ct in ("Unk", "UNK", "Unknown"):
+                print("Skipping unknown column")
+                continue
             mask = adata.obs[cell_type_col] == ct
             subset = adata[mask, common_peaks]
             X_sum = np.asarray(subset.X.sum(axis=0)).flatten()
@@ -48,8 +52,8 @@ def construct_pseudobulk(adata_list, signature, dest, sample_col='sample_id',
     else:
         sig_df = signature.copy()
 
-    sig_peaks = sig_df.index 
-    bulk_sums = {} 
+    sig_peaks = sig_df.index
+    bulk_sums = {}
     seen_samples = {}
 
     for i, adata in enumerate(adata_list):

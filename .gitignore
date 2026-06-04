@@ -1,4 +1,7 @@
 *.pyc
 *.tsv
 *.h5ad
+*.h5ads
 *.csv
+*.tsv.gz
+*.egg-info
