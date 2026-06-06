@@ -28,7 +28,6 @@ def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
     if total > 0:
         proportions = proportions / total
 
-    print_proportions(proportions)
     return proportions
 
 
@@ -44,7 +43,6 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
     if total > 0:
         proportions = proportions / total
 
-    print_proportions(proportions)
     return proportions
 
 

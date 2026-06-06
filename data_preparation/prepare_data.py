@@ -3,7 +3,7 @@ import numpy as np
 
 
 def construct_signature(adata_list, dest, cell_type_col='cluster_label',
-                        min_cells=50, top_n_variable=5000):
+                        min_cells=10, top_n_variable=5_000):
 
     common_peaks = adata_list[0].var_names
     for adata in adata_list[1:]:
@@ -17,7 +17,6 @@ def construct_signature(adata_list, dest, cell_type_col='cluster_label',
         print(f"Processing dataset {i+1}/{len(adata_list)}...")
         for ct in adata.obs[cell_type_col].dropna().unique():
             if ct in ("Unk", "UNK", "Unknown"):
-                print("Skipping unknown column")
                 continue
             mask = adata.obs[cell_type_col] == ct
             subset = adata[mask, common_peaks]
