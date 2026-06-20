@@ -2,13 +2,20 @@ import pandas as pd
 from scipy.optimize import nnls
 from sklearn.linear_model import ElasticNet
 from sklearn.svm import NuSVR
-from sklearn.inspection import permutation_importance
+import scanpy as sc
+import anndata as ad
 
+from sklearn.inspection import permutation_importance
+import xgboost
+from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+
+# Core Statistical and ML Models
 def nnls_deconvolve(signature_matrix: pd.DataFrame,
                mixture_vector: pd.Series) -> pd.Series:
 
     m = mixture_vector.reindex(signature_matrix.index)
-    f, residual = nnls(signature_matrix.values, m.values)
+    f, _ = nnls(signature_matrix.values, m.values)
 
     if f.sum() > 0:
         f = f / f.sum()
@@ -46,6 +53,33 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
     return proportions
 
 
+def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
+                       mixture_vector: pd.Series) -> pd.Series:
+    
+    X = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
+    y = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
+
+    y = y.drop(columns=["Unknown"])
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    xgb = XGBRegressor(
+        tree_method="hist",
+        n_estimators=128,
+        n_jobs=16,
+        max_depth=8,
+        multi_strategy="multi_output_tree",
+        subsample=0.6,
+    )
+
+    print(mixture_vector)
+    print(xgb.predict(mixture_vector))
+
+    xgb.fit(X_train, y_train)
+    y_pred = xgb.predict(X_test.head(5))
+    print(y_pred)
+
+
 def print_proportions(proportions: pd.Series, top_n=None):
     print("\nEstimated cell type proportions:")
     print("─" * 35)
@@ -60,3 +94,10 @@ def print_proportions(proportions: pd.Series, top_n=None):
 
     print("─" * 35)
     print(f"  {'Total':<25} {proportions.sum():.4f}")
+
+
+if __name__ == "__main__":
+    s1_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
+    print(s1_adata.var[:5])
+    print(s1_adata.obs.columns)
+    print(s1_adata.obs['cluster_label'][:5])

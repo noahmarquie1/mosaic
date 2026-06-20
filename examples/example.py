@@ -1,8 +1,12 @@
 import pandas as pd
-from mosaic.deconvolve import nnls_deconvolve, elastic_net_deconvolve, nu_svr_deconvolve, print_proportions
+from mosaic.deconvolve import nnls_deconvolve, elastic_net_deconvolve, nu_svr_deconvolve, xgb_deconvolve, print_proportions
 from mosaic.evaluate import evaluate_deconvolution
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
+
+import xgboost as xgb
+from xgboost import XGBRegressor
 
 celltype_mapping: pd.Series = pd.read_csv("benchmark_data/benchmark_labels.csv").set_index("original_label")["mapped_label"]
 target_index = pd.Index(celltype_mapping.unique())
@@ -20,7 +24,7 @@ def do_benchmark1():
         true_props = pd.Series(true_props.iloc[:, 0], index=true_props.index)
 
         sig = pd.read_csv(f"benchmark_data/benchmark1/test{i}/signature.tsv", sep='\t', index_col=0)
-        bulk = pd.read_csv(f"benchmark_data/benchmark1/test{i}/bulk.tsv", sep='\t', index_col=0).iloc[:, 0]
+        bulk = pd.read_csv(f"benchmark_data/benchmark1/test{i}/eval_bulk.tsv", sep='\t', index_col=0).iloc[:, 0]
 
         nnls_props = nnls_deconvolve(sig, bulk)
         nnls_props = nnls_props.rename(index=celltype_mapping)
@@ -47,14 +51,22 @@ def do_benchmark1():
         svr_results[i-1] = (i-1, svr_eval['correlation'])
 
 
-do_benchmark1()
+if __name__ == "__main__":
 
-print(nnls_results, en_results, svr_results)
+    #training_bulk = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
+    #training_bulk_props = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
+    #eval_bulk = pd.read_csv("benchmark_data/benchmark1/test1/eval_bulk.tsv")
+    #xgb_deconvolve(training_bulk, training_bulk_props, eval_bulk)
+    #quit()
 
-plt.scatter(nnls_results[:, 0], nnls_results[:, 1], c="blue", label="NNLS")
-plt.scatter(en_results[:, 0], en_results[:, 1], c="green", label="Elastic Net")
-plt.scatter(svr_results[:, 0], svr_results[:, 1], c="red", label="SVR")
-plt.xlabel("Benchmark")
-plt.ylabel("PCC")
-plt.ylim(0, 1)
-plt.show()
+    do_benchmark1()
+
+    print(nnls_results, en_results, svr_results)
+
+    plt.scatter(nnls_results[:, 0], nnls_results[:, 1], c="blue", label="NNLS")
+    plt.scatter(en_results[:, 0], en_results[:, 1], c="green", label="Elastic Net")
+    plt.scatter(svr_results[:, 0], svr_results[:, 1], c="red", label="SVR")
+    plt.xlabel("Benchmark")
+    plt.ylabel("PCC")
+    plt.ylim(0, 1)
+    plt.show()
