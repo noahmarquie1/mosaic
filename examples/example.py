@@ -53,11 +53,11 @@ def do_benchmark1():
 
 if __name__ == "__main__":
 
-    #training_bulk = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
-    #training_bulk_props = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
-    #eval_bulk = pd.read_csv("benchmark_data/benchmark1/test1/eval_bulk.tsv")
-    #xgb_deconvolve(training_bulk, training_bulk_props, eval_bulk)
-    #quit()
+    training_bulk = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
+    training_bulk_props = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
+    eval_bulk = pd.read_csv("benchmark_data/benchmark1/test1/eval_bulk.tsv", sep='\t', index_col=0).iloc[:, 0]
+    xgb_deconvolve(training_bulk, training_bulk_props, eval_bulk)
+    quit()
 
     do_benchmark1()
 

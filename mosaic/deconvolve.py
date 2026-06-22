@@ -55,29 +55,36 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
 
 def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
                        mixture_vector: pd.Series) -> pd.Series:
-    
-    X = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
-    y = pd.read_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
 
-    y = y.drop(columns=["Unknown"])
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
+    training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
+    X_train, X_test, y_train, y_test = train_test_split(
+        training_bulks, 
+        training_bulk_props, 
+        test_size=0.2
+    )
 
     xgb = XGBRegressor(
         tree_method="hist",
-        n_estimators=128,
+        n_estimators=2,
         n_jobs=16,
-        max_depth=8,
+        max_depth=4,
         multi_strategy="multi_output_tree",
         subsample=0.6,
+        eval_metric="rmse"
     )
 
-    print(mixture_vector)
-    print(xgb.predict(mixture_vector))
+    #print(y_train.head)
+    #print(y_test.head)
 
-    xgb.fit(X_train, y_train)
-    y_pred = xgb.predict(X_test.head(5))
-    print(y_pred)
+    mixture_vector = mixture_vector.to_frame().T
+    print(mixture_vector)
+
+    xgb.fit(X_train, y_train, verbose=10, eval_set=[(X_train, y_train)])
+    y_pred = xgb.predict(mixture_vector)
+    return y_pred
+
+
 
 
 def print_proportions(proportions: pd.Series, top_n=None):
