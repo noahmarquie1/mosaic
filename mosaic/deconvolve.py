@@ -6,9 +6,10 @@ import scanpy as sc
 import anndata as ad
 
 from sklearn.inspection import permutation_importance
-import xgboost
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
+
+from sklearn.ensemble import RandomForestRegressor
 
 # Core Statistical and ML Models
 def nnls_deconvolve(signature_matrix: pd.DataFrame,
@@ -53,14 +54,35 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
     return proportions
 
 
+def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
+                       mixture_vector: pd.Series) -> pd.Series:
+
+    model = RandomForestRegressor(n_estimators=100)
+
+    training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
+    training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
+    X_train, X_test, y_train, y_test = train_test_split(
+        training_bulks,
+        training_bulk_props,
+        test_size=0.2
+    )
+
+    model.fit(X_train, y_train)
+
+    mixture_vector = mixture_vector.to_frame().T
+    y_pred = model.predict(mixture_vector)
+    y_pred = pd.Series(y_pred[0], index=training_bulk_props.columns)
+    return y_pred
+
+
 def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
                        mixture_vector: pd.Series) -> pd.Series:
 
     training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
     training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
     X_train, X_test, y_train, y_test = train_test_split(
-        training_bulks, 
-        training_bulk_props, 
+        training_bulks,
+        training_bulk_props,
         test_size=0.2
     )
 
@@ -74,17 +96,11 @@ def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFra
         eval_metric="rmse"
     )
 
-    #print(y_train.head)
-    #print(y_test.head)
-
     mixture_vector = mixture_vector.to_frame().T
-    print(mixture_vector)
-
     xgb.fit(X_train, y_train, verbose=10, eval_set=[(X_train, y_train)])
     y_pred = xgb.predict(mixture_vector)
+    y_pred = pd.Series(y_pred[0], index=training_bulk_props.columns)
     return y_pred
-
-
 
 
 def print_proportions(proportions: pd.Series, top_n=None):
