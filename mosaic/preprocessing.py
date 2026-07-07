@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scanpy as sc
+import scipy.sparse as sp
 
 
 def generate_signature_matrix(adata_list, dest, cell_type_col='cluster_label',
@@ -59,24 +60,18 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
                   f"{i+1} — these will be treated as 0 after normalization.")
 
         if sample_col in adata.obs.columns:
-            unique_samples = adata.obs[sample_col].dropna().unique()
-            for sample in unique_samples:
+            codes, groups = pd.factorize(adata.obs[sample_col])
+            valid = codes >= 0
+            G = sp.csr_matrix((np.ones(valid.sum()), (codes[valid], np.nonzero(valid)[0])),
+                shape=(len(groups), adata.n_obs))
+            sums = np.asarray((G @ adata[:, common_peaks].X).todense())
+
+            for j, sample in enumerate(groups):
                 key = f"dataset{i+1}_{sample}" if dataset_prefix else sample
-
-                if key in seen_samples and seen_samples[key] != i:
-                    print(f"  Warning: sample '{sample}' already seen in dataset "
-                          f"{seen_samples[key]+1}. Summing — verify this is intended.")
-                seen_samples[key] = i
-
-                mask = adata.obs[sample_col] == sample
-                subset = adata[mask, common_peaks]
-                raw_sum = np.asarray(subset.X.sum(axis=0)).flatten()
-
-                # Align to full signature peak set
                 series = pd.Series(0.0, index=peaks)
-                series.loc[common_peaks] = raw_sum
-
+                series.loc[common_peaks] = sums[j]
                 bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=peaks)) + series
+
         else:
             key = f"sample_{i+1}"
             subset = adata[:, common_peaks]
