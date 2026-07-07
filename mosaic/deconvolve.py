@@ -57,10 +57,10 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
 def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
                        mixture_vector: pd.Series) -> pd.Series:
 
-    model = RandomForestRegressor(n_estimators=100)
+    model = RandomForestRegressor(n_estimators=25)
 
-    training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
-    training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
+    #training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
+    #training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,
@@ -78,8 +78,8 @@ def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props:
 def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
                        mixture_vector: pd.Series) -> pd.Series:
 
-    training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
-    training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
+    #training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
+    #training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,

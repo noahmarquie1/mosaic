@@ -43,7 +43,7 @@ def construct_signature(adata_list, dest, cell_type_col='cluster_label',
 
 
 def construct_pseudobulk(adata_list, signature, dest, sample_col='sample_id',
-                         dataset_prefix=False):
+                         dataset_prefix=False) -> pd.Series:
 
     print("Loading signature reference...")
     if isinstance(signature, str):

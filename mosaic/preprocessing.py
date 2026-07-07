@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from scipy.sparse import issparse
 import scanpy as sc
 
 
@@ -44,24 +43,17 @@ def generate_signature_matrix(adata_list, dest, cell_type_col='cluster_label',
     return signature
 
 
-def generate_eval_pseudobulk(adata_list, signature, dest=None, sample_col='sample_id',
+def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id',
                              dataset_prefix=False):
 
-    print("Loading signature reference...")
-    if isinstance(signature, str):
-        sig_df = pd.read_csv(signature, sep='\t', index_col=0)
-    else:
-        sig_df = signature.copy()
-
-    sig_peaks = sig_df.index
     bulk_sums = {}
     seen_samples = {}
 
     for i, adata in enumerate(adata_list):
         print(f"Aggregating bulk for dataset {i+1}/{len(adata_list)}...")
 
-        common_peaks = adata.var_names.intersection(sig_peaks)
-        missing = len(sig_peaks) - len(common_peaks)
+        common_peaks = adata.var_names.intersection(peaks)
+        missing = len(peaks) - len(common_peaks)
         if missing > 0:
             print(f"  Warning: {missing} signature peaks absent from dataset "
                   f"{i+1} — these will be treated as 0 after normalization.")
@@ -81,17 +73,17 @@ def generate_eval_pseudobulk(adata_list, signature, dest=None, sample_col='sampl
                 raw_sum = np.asarray(subset.X.sum(axis=0)).flatten()
 
                 # Align to full signature peak set
-                series = pd.Series(0.0, index=sig_peaks)
+                series = pd.Series(0.0, index=peaks)
                 series.loc[common_peaks] = raw_sum
 
-                bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=sig_peaks)) + series
+                bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=peaks)) + series
         else:
             key = f"sample_{i+1}"
             subset = adata[:, common_peaks]
             raw_sum = np.asarray(subset.X.sum(axis=0)).flatten()
-            series = pd.Series(0.0, index=sig_peaks)
+            series = pd.Series(0.0, index=peaks)
             series.loc[common_peaks] = raw_sum
-            bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=sig_peaks)) + series
+            bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=peaks)) + series
 
     print("Normalizing bulk samples...")
     bulk = pd.DataFrame(bulk_sums)  # peaks x samples
@@ -104,7 +96,7 @@ def generate_eval_pseudobulk(adata_list, signature, dest=None, sample_col='sampl
         col_totals = col_totals.drop(zero_samples)
 
     bulk_norm = np.log1p((bulk.div(col_totals, axis=1)) * 1e6)
-    bulk_norm = bulk_norm.loc[sig_peaks]
+    bulk_norm = bulk_norm.loc[peaks]
 
     print(f"Bulk matrix shape: {bulk_norm.shape} (peaks x samples)")
     if dest:
@@ -113,7 +105,7 @@ def generate_eval_pseudobulk(adata_list, signature, dest=None, sample_col='sampl
     return bulk_norm
 
 
-def generate_training_pseudobulks(adata, signature, cell_type_col="cluster_label", n_pseudobulks=1000):
+def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="cluster_label", n_pseudobulks=1000) -> tuple[pd.DataFrame, pd.DataFrame]:
     rng = np.random.default_rng()
 
     groups = np.empty(adata.n_obs, dtype=int)
@@ -121,36 +113,51 @@ def generate_training_pseudobulks(adata, signature, cell_type_col="cluster_label
         groups[idx] = g
 
     adata.obs['pb_group'] = groups
-    bulk = generate_eval_pseudobulk([adata], signature, sample_col='pb_group')
+    bulk = generate_eval_pseudobulk([adata], peaks, sample_col='pb_group')
 
-    sig_df = pd.read_csv(signature, sep='\t', index_col=0)
     counts = pd.crosstab(adata.obs['pb_group'], adata.obs[cell_type_col])
     props = counts.div(counts.sum(axis=1), axis=0)
-    #props = props.reindex(index=X.index, columns=sig_df.columns, fill_value=0.0)
 
+    props = props.reindex(index=bulk.columns, columns=cell_type_index, fill_value=0.0)
     return bulk.T, props
-
 
 
 if __name__ == "__main__":
 
-    sig_path = "benchmark_data/benchmark1/test1/signature.tsv"
-    s2_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
-    #s3_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
-    #s4_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
-    #s5_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
+    cell_type_index = pd.read_csv("benchmark_data/benchmark1/test1/signature.tsv", sep='\t', index_col=0).columns
 
-    X, y = generate_training_pseudobulks(s2_adata, sig_path, n_pseudobulks=2000)
+    s1_peaks = pd.read_csv("benchmark_data/benchmark1/test1/eval_bulk.tsv", sep='\t', index_col=0).index
+    s2_peaks = pd.read_csv("benchmark_data/benchmark1/test2/eval_bulk.tsv", sep='\t', index_col=0).index
+    s3_peaks = pd.read_csv("benchmark_data/benchmark1/test3/eval_bulk.tsv", sep='\t', index_col=0).index
+    s4_peaks = pd.read_csv("benchmark_data/benchmark1/test4/eval_bulk.tsv", sep='\t', index_col=0).index
+    s5_peaks = pd.read_csv("benchmark_data/benchmark1/test5/eval_bulk.tsv", sep='\t', index_col=0).index
 
-    X.to_csv("benchmark_data/benchmark1/test1/training_bulk.csv")
-    y.to_csv("benchmark_data/benchmark1/test1/training_bulk_props.csv")
+    s1_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
+    s2_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D11T1.h5ad")
+    s3_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D12T1.h5ad")
+    s4_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D12T2.h5ad")
+    s5_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D12T3.h5ad")
 
-    print(y)
-    #pb_3 = generate_training_pseudobulks(s3_adata, sig_path, 25)
-    #pb_4 = generate_training_pseudobulks(s4_adata, sig_path, 25)
-    #pb_5 = generate_training_pseudobulks(s5_adata, sig_path, 25)
+    peaks_list = [s1_peaks, s2_peaks, s3_peaks, s4_peaks, s5_peaks]
 
-    #training_pb = pd.concat([pb_2, pb_3, pb_4, pb_5])
+    for i in range(5):
 
-    #print(training_pb)
-    #training_pb.to_csv("benchmark_data/benchmark")
+        peaks = peaks_list[i]
+
+        pb_1, pb_1_props = generate_training_pseudobulks(s1_adata, peaks, cell_type_index, n_pseudobulks=20)
+        pb_2, pb_2_props = generate_training_pseudobulks(s2_adata, peaks, cell_type_index, n_pseudobulks=20)
+        pb_3, pb_3_props = generate_training_pseudobulks(s3_adata, peaks, cell_type_index, n_pseudobulks=20)
+        pb_4, pb_4_props = generate_training_pseudobulks(s4_adata, peaks, cell_type_index, n_pseudobulks=20)
+        pb_5, pb_5_props = generate_training_pseudobulks(s5_adata, peaks, cell_type_index, n_pseudobulks=20)
+
+        pseudobulks = [pb_1, pb_2, pb_3, pb_4, pb_5]
+        pseudobulk_props = [pb_1_props, pb_2_props, pb_3_props, pb_4_props, pb_5_props]
+
+        pseudobulks.pop(i)
+        pseudobulk_props.pop(i)
+
+        X = pd.concat(pseudobulks)
+        y = pd.concat(pseudobulk_props)
+
+        X.to_csv(f"benchmark_data/benchmark1/test{i+1}/training_bulk.csv")
+        y.to_csv(f"benchmark_data/benchmark1/test{i+1}/training_bulk_props.csv")
