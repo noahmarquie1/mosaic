@@ -43,7 +43,7 @@ def do_benchmark1():
         svr_props = svr_props.rename(index=celltype_mapping)
         svr_props = svr_props.groupby(level=0).sum()
         svr_props = svr_props.reindex(target_index, fill_value=0)
-
+        """
         forests_props = random_forests_deconvolve(training_pb, training_pb_props, eval_bulk)
         forests_props = forests_props.rename(index=celltype_mapping)
         forests_props = forests_props.groupby(level=0).sum()
@@ -53,19 +53,24 @@ def do_benchmark1():
         xgb_props = xgb_props.rename(index=celltype_mapping)
         xgb_props = xgb_props.groupby(level=0).sum()
         xgb_props = xgb_props.reindex(target_index, fill_value=0)
+        """
 
         true_props = true_props.reindex(target_index, fill_value=0)
         nnls_eval = evaluate_deconvolution(nnls_props, true_props)
         en_eval = evaluate_deconvolution(en_props, true_props)
         svr_eval = evaluate_deconvolution(svr_props, true_props)
+        """
         forests_eval = evaluate_deconvolution(forests_props, true_props)
         xgb_eval = evaluate_deconvolution(xgb_props, true_props)
+        """
 
         nnls_results[i-1] = (i-1, nnls_eval['correlation'])
         en_results[i-1] = (i-1, en_eval['correlation'])
         svr_results[i-1] = (i-1, svr_eval['correlation'])
+        """
         forests_results[i-1] = (i-1, forests_eval['correlation'])
         xgb_results[i-1] = (i-1, xgb_eval['correlation'])
+        """
 
 
 if __name__ == "__main__":

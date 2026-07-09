@@ -100,21 +100,62 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
     return bulk_norm
 
 
-def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="cluster_label", n_pseudobulks=1000) -> tuple[pd.DataFrame, pd.DataFrame]:
+def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="cluster_label",
+                                   n_pseudobulks=1000, cells_per_pseudobulk=300,
+                                   alpha=1.0, sparse_alpha=0.1, sparse_frac=0.3) -> tuple[pd.DataFrame, pd.DataFrame]:
     rng = np.random.default_rng()
+    common_peaks = adata.var_names.intersection(peaks)
+    X = sp.csr_matrix(adata[:, common_peaks].X)
 
-    groups = np.empty(adata.n_obs, dtype=int)
-    for g, idx in enumerate(np.array_split(rng.permutation(adata.n_obs), n_pseudobulks)):
-        groups[idx] = g
+    cell_type_index = pd.Index(cell_type_index)
+    obs_types = adata.obs[cell_type_col].values
+    type_to_indices = {ct: np.where(obs_types == ct)[0] for ct in cell_type_index
+                       if (obs_types == ct).any()}
+    available_types = list(type_to_indices.keys())
+    k = len(available_types)
 
-    adata.obs['pb_group'] = groups
-    bulk = generate_eval_pseudobulk([adata], peaks, sample_col='pb_group')
+    n_sparse = int(round(n_pseudobulks * sparse_frac))
+    n_dense = n_pseudobulks - n_sparse
+    regime_alphas = np.concatenate([np.full(n_dense, alpha), np.full(n_sparse, sparse_alpha)])
+    rng.shuffle(regime_alphas)
 
-    counts = pd.crosstab(adata.obs['pb_group'], adata.obs[cell_type_col])
-    props = counts.div(counts.sum(axis=1), axis=0)
+    rows, cols = [], []
+    sampled_labels = []
+    for pb in range(n_pseudobulks):
+        target = rng.dirichlet(np.full(k, regime_alphas[pb]))
+        counts = np.floor(target * cells_per_pseudobulk).astype(int)
+        remainder = cells_per_pseudobulk - counts.sum()
+        if remainder > 0:
+            counts[np.argsort(-(target * cells_per_pseudobulk - counts))[:remainder]] += 1
 
-    props = props.reindex(index=bulk.columns, columns=cell_type_index, fill_value=0.0)
-    return bulk.T, props
+        chosen = np.concatenate([
+            rng.choice(type_to_indices[ct], size=counts[ti], replace=True)
+            for ti, ct in enumerate(available_types) if counts[ti] > 0
+        ])
+        rows.append(np.full(len(chosen), pb))
+        cols.append(chosen)
+        sampled_labels.append(adata.obs[cell_type_col].iloc[chosen].values)
+
+    G = sp.coo_matrix(
+        (np.ones(len(np.concatenate(rows))), (np.concatenate(rows), np.concatenate(cols))),
+        shape=(n_pseudobulks, adata.n_obs)
+    ).tocsr()
+    sums = np.asarray((G @ X).todense())
+
+    bulk = pd.DataFrame(0.0, index=range(n_pseudobulks), columns=peaks)
+    bulk.loc[:, common_peaks] = sums
+    col_totals = bulk.sum(axis=1)
+    bulk_norm = np.log1p(bulk.div(col_totals, axis=0) * 1e6)
+
+    props = pd.DataFrame([
+        pd.Series(labels).value_counts(normalize=True).reindex(cell_type_index, fill_value=0.0)
+        for labels in sampled_labels
+    ])
+    props.index = bulk_norm.index
+
+    print(f"Generated training pseudobulks, shape: {bulk_norm.shape}")
+
+    return bulk_norm, props
 
 
 if __name__ == "__main__":

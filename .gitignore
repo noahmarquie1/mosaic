@@ -3,3 +3,5 @@
 *.h5ads
 *.tsv.gz
 *.egg-info
+site/
+eval_data/
