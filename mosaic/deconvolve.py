@@ -29,8 +29,11 @@ def nnls_deconvolve(signature_matrix: pd.DataFrame,
 def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
                            mixture_vector: pd.Series) -> pd.Series:
 
+    A = np.expm1(signature_matrix.to_numpy(dtype=float))
+    b = np.expm1(mixture_vector.to_numpy(dtype=float))
+
     model = ElasticNet(alpha=0.01, l1_ratio=0.5, positive=True)
-    model.fit(signature_matrix, mixture_vector)
+    model.fit(A, b)
     proportions = pd.Series(model.coef_, index=signature_matrix.columns)
 
     total = proportions.sum()
@@ -42,8 +45,12 @@ def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
 
 def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
                      mixture_vector: pd.Series) -> pd.Series:
+
+    A = np.expm1(signature_matrix.to_numpy(dtype=float))
+    b = np.expm1(mixture_vector.to_numpy(dtype=float))
+
     model = NuSVR(kernel='rbf', nu=0.5, C=1.0, gamma='scale')
-    model.fit(signature_matrix, mixture_vector)
+    model.fit(A, b)
 
     results = permutation_importance(model, signature_matrix, mixture_vector, n_repeats=10)
     proportions = pd.Series(results.importances_mean, index=signature_matrix.columns)
@@ -60,7 +67,7 @@ def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props:
 
     print("Starting random forests deconvolution:\n")
     model = RandomForestRegressor(
-        n_estimators=500,
+        n_estimators=25,
         max_features=0.3,
         min_samples_leaf=5,
         max_samples=0.7,
@@ -68,8 +75,6 @@ def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props:
         random_state=0,
     )
 
-    #training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
-    #training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,
@@ -90,8 +95,7 @@ def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFra
                        mixture_vector: pd.Series) -> pd.Series:
 
     print("Starting xgboost deconvolution:\n")
-    #training_bulks = training_bulks.drop(columns=["Unnamed: 0"])
-    #training_bulk_props = training_bulk_props.drop(columns=["Unknown"])
+
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,
@@ -100,7 +104,7 @@ def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFra
 
     model = XGBRegressor(
         tree_method="hist",
-        n_estimators=500,
+        n_estimators=25,
         learning_rate=0.02,
         max_depth=5,
         subsample=0.7,
@@ -117,8 +121,13 @@ def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFra
     model.fit(X_train, y_train, verbose=10, eval_set=[(X_test, y_test)])
     y_pred = model.predict(mixture_vector)
     y_pred = pd.Series(y_pred[0], index=training_bulk_props.columns)
-    print("Finished xgboost deconvolution.\n")
 
+    y_pred = y_pred.clip(lower=0)
+    total = y_pred.sum()
+    if total > 0:
+        y_pred = y_pred / total
+
+    print("Finished xgboost deconvolution.\n")
     return y_pred
 
 

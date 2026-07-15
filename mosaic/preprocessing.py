@@ -2,10 +2,78 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scipy.sparse as sp
+import anndata as ad
+from sklearn.decomposition import TruncatedSVD
+from sklearn.cluster import KMeans
 
 
-def generate_signature_matrix(adata_list, dest, cell_type_col='cluster_label',
-                              min_cells=10, top_n_variable=2_000):
+def filter_zero_variance_peaks(adata: ad.AnnData, batch_col: str) -> ad.AnnData:
+    """Drop peaks with zero variance in ANY batch -- these break ComBat's
+    per-batch delta estimation."""
+    X = adata.X.toarray() if sp.issparse(adata.X) else np.asarray(adata.X)
+    keep = np.ones(X.shape[1], dtype=bool)
+    for batch in adata.obs[batch_col].unique():
+        batch_mask = (adata.obs[batch_col] == batch).values
+        batch_var = X[batch_mask].var(axis=0)
+        keep &= (batch_var > 0)
+    print(f"Dropping {(~keep).sum()} peaks with zero variance in at least one batch "
+          f"({keep.sum()} retained of {len(keep)}).")
+    return adata[:, keep].copy()
+
+
+def build_metacells(adata: ad.AnnData, cell_type_col: str, cells_per_metacell: int = 30,
+                    min_cells_for_clustering: int = 60, max_metacells_per_type: int = 50,
+                    random_state: int = 0) -> ad.AnnData:
+
+    X = adata.X.tocsr() if sp.issparse(adata.X) else adata.X
+
+    metacell_rows, metacell_meta = [], []
+
+    for ct in adata.obs[cell_type_col].unique():
+        mask = (adata.obs[cell_type_col] == ct).values
+        n_cells = mask.sum()
+        if n_cells == 0:
+            continue
+
+        X_ct = X[mask]
+        n_metacells = max(1, min(max_metacells_per_type, n_cells // cells_per_metacell))
+
+        if n_cells < min_cells_for_clustering or n_metacells <= 1:
+            summed = np.asarray(X_ct.sum(axis=0)).ravel()
+            metacell_rows.append(summed)
+            metacell_meta.append({cell_type_col: ct, "n_cells": int(n_cells), "metacell_id": f"{ct}_0"})
+            continue
+
+        # low-dim embedding for clustering only -- does not touch the raw
+        # counts that actually get summed below
+        depth = np.asarray(X_ct.sum(axis=1)).ravel()
+        depth[depth == 0] = 1
+        X_norm = X_ct.multiply(1.0 / depth[:, None]).tocsr() if sp.issparse(X_ct) else X_ct / depth[:, None]
+        if sp.issparse(X_norm):
+            X_norm = X_norm.copy()
+            X_norm.data = np.log1p(X_norm.data * 1e4)
+        else:
+            X_norm = np.log1p(X_norm * 1e4)
+
+        n_components = min(30, n_cells - 1, X_norm.shape[1] - 1)
+        emb = TruncatedSVD(n_components=n_components, random_state=random_state).fit_transform(X_norm)
+
+        labels = KMeans(n_clusters=n_metacells, random_state=random_state, n_init=10).fit_predict(emb)
+
+        for c in range(n_metacells):
+            c_mask = labels == c
+            if c_mask.sum() == 0:
+                continue
+            summed = np.asarray(X_ct[c_mask].sum(axis=0)).ravel()
+            metacell_rows.append(summed)
+            metacell_meta.append({cell_type_col: ct, "n_cells": int(c_mask.sum()), "metacell_id": f"{ct}_{c}"})
+
+    obs_meta = pd.DataFrame(metacell_meta).set_index("metacell_id", drop=False)
+    return ad.AnnData(X=np.vstack(metacell_rows), obs=obs_meta, var=adata.var.copy())
+
+
+def generate_signature_matrix(adata_list, cell_type_col='cluster_label', min_cells=10,
+                              top_n_variable=2_000, normalized=False, dest=None):
 
     common_peaks = adata_list[0].var_names
     for adata in adata_list[1:]:
@@ -31,24 +99,27 @@ def generate_signature_matrix(adata_list, dest, cell_type_col='cluster_label',
         if ct_counts[ct] < min_cells:
             print(f"Skipping '{ct}': {ct_counts[ct]} cells < {min_cells} minimum.")
             continue
-        total = counts_sum.sum()
-        cpm = (counts_sum / total) * 1e6
-        signature[ct] = np.log1p(cpm)
 
-    # Feature selection: keep top variable peaks across cell types
+        if not normalized:
+            signature[ct] = counts_sum
+        else:
+            signature[ct] = counts_sum / ct_counts[ct]
+
+
     peak_vars = signature.var(axis=1)
     signature = signature.loc[peak_vars.nlargest(top_n_variable).index]
     print(f"Retained {len(signature)} variable peaks.")
 
-    signature.to_csv(dest, sep='\t')
+    if dest:
+        signature.to_csv(dest, sep='\t')
     return signature
 
 
 def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id',
-                             dataset_prefix=False):
+                             dataset_prefix=False, normalized=False):
 
     bulk_sums = {}
-    seen_samples = {}
+    bulk_counts = {}
 
     for i, adata in enumerate(adata_list):
         print(f"Aggregating bulk for dataset {i+1}/{len(adata_list)}...")
@@ -65,12 +136,14 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
             G = sp.csr_matrix((np.ones(valid.sum()), (codes[valid], np.nonzero(valid)[0])),
                 shape=(len(groups), adata.n_obs))
             sums = np.asarray((G @ adata[:, common_peaks].X).todense())
+            counts = np.asarray(G.sum(axis=1)).flatten()
 
             for j, sample in enumerate(groups):
                 key = f"dataset{i+1}_{sample}" if dataset_prefix else sample
                 series = pd.Series(0.0, index=peaks)
                 series.loc[common_peaks] = sums[j]
                 bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=peaks)) + series
+                bulk_counts[key] = bulk_counts.get(key, 0) + counts[j]
 
         else:
             key = f"sample_{i+1}"
@@ -79,25 +152,29 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
             series = pd.Series(0.0, index=peaks)
             series.loc[common_peaks] = raw_sum
             bulk_sums[key] = bulk_sums.get(key, pd.Series(0.0, index=peaks)) + series
+            bulk_counts[key] = bulk_counts.get(key, 0) + adata.n_obs
 
-    print("Normalizing bulk samples...")
     bulk = pd.DataFrame(bulk_sums)  # peaks x samples
-
     col_totals = bulk.sum(axis=0)
     zero_samples = col_totals[col_totals == 0].index.tolist()
     if zero_samples:
         print(f"  Warning: samples with zero total counts (dropping): {zero_samples}")
         bulk = bulk.drop(columns=zero_samples)
         col_totals = col_totals.drop(zero_samples)
+        for s in zero_samples:
+            bulk_counts.pop(s, None)
 
-    bulk_norm = np.log1p((bulk.div(col_totals, axis=1)) * 1e6)
-    bulk_norm = bulk_norm.loc[peaks]
+    if not normalized:
+        result = bulk
+    else:
+        counts_series = pd.Series(bulk_counts)[bulk.columns]  # align to bulk's surviving columns/order
+        result = bulk.div(counts_series, axis=1)
 
-    print(f"Bulk matrix shape: {bulk_norm.shape} (peaks x samples)")
+    print(f"Bulk matrix shape: {bulk.shape} (peaks x samples)")
     if dest:
-        bulk_norm.to_csv(dest, sep='\t')
+        result.to_csv(dest, sep='\t')
 
-    return bulk_norm
+    return result
 
 
 def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="cluster_label",

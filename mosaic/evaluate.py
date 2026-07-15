@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.stats import pearsonr
+from anndata import AnnData
 
 
 def evaluate_deconvolution(estimated_proportions: pd.Series, true_proportions: pd.Series) -> dict:
@@ -34,31 +35,56 @@ def evaluate_deconvolution(estimated_proportions: pd.Series, true_proportions: p
 
 
 def get_true_proportions(
-        fragments_dir: str | Path,
+        fragments_dir: str | Path | None = None,
         cell_type_col: str = "cell_type",
         drop_unknown: bool = True,
         unknown_label: str = "Unknown",
         metadata_glob: str = "*-metadata.csv",
+        labels: pd.Series | None = None,
     ) -> pd.Series:
 
-    fragments_dir = Path(fragments_dir)
-    files = list(fragments_dir.glob(metadata_glob))
-    if not files:
-        raise FileNotFoundError(
-            f"No files matching '{metadata_glob}' found in {fragments_dir}"
-        )
+    if labels is None:
+        if fragments_dir is None:
+            raise ValueError("Must provide either 'fragments_dir' or 'labels'.")
+        fragments_dir = Path(fragments_dir)
+        files = list(fragments_dir.glob(metadata_glob))
+        if not files:
+            raise FileNotFoundError(
+                f"No files matching '{metadata_glob}' found in {fragments_dir}"
+            )
 
-    meta = pd.concat([pd.read_csv(f, index_col=0) for f in files])
+        meta = pd.concat([pd.read_csv(f, index_col=0) for f in files])
 
-    if cell_type_col not in meta.columns:
-        raise ValueError(
-            f"Column '{cell_type_col}' not found. "
-            f"Available columns: {list(meta.columns)}"
-        )
+        if cell_type_col not in meta.columns:
+            raise ValueError(
+                f"Column '{cell_type_col}' not found. "
+                f"Available columns: {list(meta.columns)}"
+            )
 
-    labels = meta[cell_type_col]
+        labels = meta[cell_type_col]
 
     if drop_unknown:
-        labels = labels[~labels.str.contains(unknown_label, case=False, na=False)]
+        labels = labels[~labels.astype(str).str.contains(unknown_label, case=False, na=False)]
 
     return labels.value_counts(normalize=True).rename("proportion")
+
+
+def get_adata_proportions(
+        adata: AnnData,
+        cell_type_col: str,
+        drop_unknown: bool = True,
+        unknown_label: str = "Unknown",
+    ) -> pd.Series:
+
+    if cell_type_col not in adata.obs.columns:
+        raise ValueError(
+            f"Column '{cell_type_col}' not found. "
+            f"Available columns: {list(adata.obs.columns)}"
+        )
+
+    return get_true_proportions(
+        cell_type_col=cell_type_col,
+        drop_unknown=drop_unknown,
+        unknown_label=unknown_label,
+        labels=adata.obs[cell_type_col],
+    )
