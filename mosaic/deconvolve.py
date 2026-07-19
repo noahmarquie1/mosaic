@@ -15,8 +15,8 @@ from sklearn.ensemble import RandomForestRegressor
 def nnls_deconvolve(signature_matrix: pd.DataFrame,
                mixture_vector: pd.Series) -> pd.Series:
 
-    A = np.expm1(signature_matrix.to_numpy(dtype=float))
-    b = np.expm1(mixture_vector.to_numpy(dtype=float))
+    A = (signature_matrix.to_numpy(dtype=float))
+    b = (mixture_vector.to_numpy(dtype=float))
     f, _ = nnls(A, b)
 
     if f.sum() > 0:

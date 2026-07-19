@@ -212,16 +212,22 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
 
     combined.layers["counts"] = combined.X.copy()
     sc.pp.normalize_total(combined, target_sum=1e6)
-    #sc.pp.combat(combined, key="study", covariates=["Cell_type (HSC)"])  # preserve cell-type signal
 
-    granja_sample = combined[combined.obs["study"] == "Granja"].copy()
-    lareau_sample = combined[combined.obs["study"] == "Lareau"].copy()
+    # Do combat preprocessing with surrounding log transformation
+    sc.pp.log1p(combined)
+    sc.pp.combat(combined, key="study", covariates=["Cell_type (HSC)"])  # preserve cell-type signal
+    combined.X = np.expm1(combined.X)
+
+    combined.X[combined.X < 0] = 0 # Removes negative values
+
+    granja_meta = combined[combined.obs["study"] == "Granja"].copy()
+    lareau_meta = combined[combined.obs["study"] == "Lareau"].copy()
 
     if sig_exists:
         sig = pd.read_csv(f"benchmark_data/benchmark2/signature.tsv", sep='\t', index_col=0)
     else:
         sig = generate_signature_matrix(
-            adata_list=[granja_sample],
+            adata_list=[granja_meta],
             cell_type_col="Cell_type (HSC)",
             min_cells=2,
         )
@@ -232,7 +238,7 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
         bulk = pd.read_csv(f"benchmark_data/benchmark2/eval_bulk.tsv", sep='\t', index_col=0).iloc[:, 0]
     else:
         bulk = generate_eval_pseudobulk(
-            adata_list=[lareau_sample],
+            adata_list=[lareau_meta],
             peaks=sig.index,
             sample_col="Donor (HSC)",
         )
@@ -241,8 +247,11 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
 
     if not training_data_exists:
         celltype_index = sig.columns
-        create_training_data(granja_sample, bulk.index, celltype_index, f"benchmark_data/benchmark2/")
+        create_training_data(granja_meta, bulk.index, celltype_index, f"benchmark_data/benchmark2/")
 
+    # Ground truth must come from the original per-cell Lareau labels, not the
+    # metacell-collapsed object (which caps every type at max_metacells_per_type
+    # and would otherwise flatten true abundance differences to near-uniform).
     true_props = get_adata_proportions(
         lareau_sample,
         "Cell_type (HSC)",
