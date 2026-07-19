@@ -73,7 +73,7 @@ def build_metacells(adata: ad.AnnData, cell_type_col: str, cells_per_metacell: i
 
 
 def generate_signature_matrix(adata_list, cell_type_col='cluster_label', min_cells=10,
-                              top_n_variable=2_000, normalized=False, dest=None):
+                              top_n_variable=2_000, dest=None):
 
     common_peaks = adata_list[0].var_names
     for adata in adata_list[1:]:
@@ -100,10 +100,7 @@ def generate_signature_matrix(adata_list, cell_type_col='cluster_label', min_cel
             print(f"Skipping '{ct}': {ct_counts[ct]} cells < {min_cells} minimum.")
             continue
 
-        if not normalized:
-            signature[ct] = counts_sum
-        else:
-            signature[ct] = counts_sum / ct_counts[ct]
+        signature[ct] = counts_sum / ct_counts[ct]
 
 
     peak_vars = signature.var(axis=1)
@@ -116,7 +113,7 @@ def generate_signature_matrix(adata_list, cell_type_col='cluster_label', min_cel
 
 
 def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id',
-                             dataset_prefix=False, normalized=False):
+                             dataset_prefix=False):
 
     bulk_sums = {}
     bulk_counts = {}
@@ -164,11 +161,8 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
         for s in zero_samples:
             bulk_counts.pop(s, None)
 
-    if not normalized:
-        result = bulk
-    else:
-        counts_series = pd.Series(bulk_counts)[bulk.columns]  # align to bulk's surviving columns/order
-        result = bulk.div(counts_series, axis=1)
+    counts_series = pd.Series(bulk_counts)[bulk.columns]
+    result = bulk.div(counts_series, axis=1)
 
     print(f"Bulk matrix shape: {bulk.shape} (peaks x samples)")
     if dest:

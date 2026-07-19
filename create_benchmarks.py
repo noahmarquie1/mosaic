@@ -212,7 +212,6 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
 
     combined.layers["counts"] = combined.X.copy()
     sc.pp.normalize_total(combined, target_sum=1e6)
-    sc.pp.log1p(combined)
     #sc.pp.combat(combined, key="study", covariates=["Cell_type (HSC)"])  # preserve cell-type signal
 
     granja_sample = combined[combined.obs["study"] == "Granja"].copy()
@@ -223,10 +222,11 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
     else:
         sig = generate_signature_matrix(
             adata_list=[granja_sample],
-            dest=f"benchmark_data/benchmark2/signature.tsv",
             cell_type_col="Cell_type (HSC)",
-            normalized=True
+            min_cells=2,
         )
+        sig = np.log1p(sig)
+        sig.to_csv(f"benchmark_data/benchmark2/signature.tsv", sep='\t')
 
     if bulk_exists:
         bulk = pd.read_csv(f"benchmark_data/benchmark2/eval_bulk.tsv", sep='\t', index_col=0).iloc[:, 0]
@@ -234,10 +234,10 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
         bulk = generate_eval_pseudobulk(
             adata_list=[lareau_sample],
             peaks=sig.index,
-            dest=f"benchmark_data/benchmark2/eval_bulk.tsv",
             sample_col="Donor (HSC)",
-            normalized=True,
         )
+        bulk = np.log1p(bulk)
+        bulk.to_csv(f"benchmark_data/benchmark2/eval_bulk.tsv", sep='\t')
 
     if not training_data_exists:
         celltype_index = sig.columns

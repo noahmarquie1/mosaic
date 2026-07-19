@@ -29,8 +29,8 @@ def nnls_deconvolve(signature_matrix: pd.DataFrame,
 def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
                            mixture_vector: pd.Series) -> pd.Series:
 
-    A = np.expm1(signature_matrix.to_numpy(dtype=float))
-    b = np.expm1(mixture_vector.to_numpy(dtype=float))
+    A = (signature_matrix.to_numpy(dtype=float))
+    b = (mixture_vector.to_numpy(dtype=float))
 
     model = ElasticNet(alpha=0.01, l1_ratio=0.5, positive=True)
     model.fit(A, b)
@@ -46,8 +46,8 @@ def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
 def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
                      mixture_vector: pd.Series) -> pd.Series:
 
-    A = np.expm1(signature_matrix.to_numpy(dtype=float))
-    b = np.expm1(mixture_vector.to_numpy(dtype=float))
+    A = (signature_matrix.to_numpy(dtype=float))
+    b = (mixture_vector.to_numpy(dtype=float))
 
     model = NuSVR(kernel='rbf', nu=0.5, C=1.0, gamma='scale')
     model.fit(A, b)

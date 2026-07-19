@@ -1,5 +1,4 @@
 import pandas as pd
-from xgboost.sklearn import xgboost_model_doc
 from mosaic.deconvolve import nnls_deconvolve, elastic_net_deconvolve, nu_svr_deconvolve, xgb_deconvolve, random_forests_deconvolve, print_proportions
 from mosaic.evaluate import evaluate_deconvolution
 import matplotlib.pyplot as plt
