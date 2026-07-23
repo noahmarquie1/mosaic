@@ -173,8 +173,8 @@ def generate_eval_pseudobulk(adata_list, peaks, dest=None, sample_col='sample_id
 
 def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="cluster_label",
                                    n_pseudobulks=1000, cells_per_pseudobulk=300,
-                                   alpha=1.0, sparse_alpha=0.1, sparse_frac=0.3) -> tuple[pd.DataFrame, pd.DataFrame]:
-    rng = np.random.default_rng()
+                                   alpha=1.0, sparse_alpha=0.1, sparse_frac=0.3, random_state=0) -> tuple[pd.DataFrame, pd.DataFrame]:
+    rng = np.random.default_rng(random_state)
     common_peaks = adata.var_names.intersection(peaks)
     X = sp.csr_matrix(adata[:, common_peaks].X)
 
@@ -215,18 +215,17 @@ def generate_training_pseudobulks(adata, peaks, cell_type_index, cell_type_col="
 
     bulk = pd.DataFrame(0.0, index=range(n_pseudobulks), columns=peaks)
     bulk.loc[:, common_peaks] = sums
-    col_totals = bulk.sum(axis=1)
-    bulk_norm = np.log1p(bulk.div(col_totals, axis=0) * 1e6)
+    bulk = np.log1p(bulk / cells_per_pseudobulk)
 
     props = pd.DataFrame([
         pd.Series(labels).value_counts(normalize=True).reindex(cell_type_index, fill_value=0.0)
         for labels in sampled_labels
     ])
-    props.index = bulk_norm.index
+    props.index = bulk.index
 
-    print(f"Generated training pseudobulks, shape: {bulk_norm.shape}")
+    print(f"Generated training pseudobulks, shape: {bulk.shape}")
 
-    return bulk_norm, props
+    return bulk, props
 
 
 if __name__ == "__main__":

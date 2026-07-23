@@ -93,13 +93,13 @@ def filter_peaks_by_pyranges(adata, merged_pr):
     return type(adata)(X=X_new, obs=adata.obs.copy(), var=pd.DataFrame(index=merged_names))
 
 
-def create_training_data(training_samples, peaks, celltype_index, out_dir):
+def create_training_data(training_samples, peaks, cell_type_index, cell_type_col="cluster_label", out_dir="."):
     training_pb: list[pd.DataFrame] = []
     training_pb_props: list[pd.DataFrame] = []
 
     for sample in training_samples:
         sample = sample.to_memory() if sample.isbacked else sample
-        pb, pb_props = generate_training_pseudobulks(sample, peaks, celltype_index, n_pseudobulks=2000)
+        pb, pb_props = generate_training_pseudobulks(sample, peaks, cell_type_index=cell_type_index, cell_type_col=cell_type_col, n_pseudobulks=10_000)
         training_pb.append(pb)
         training_pb_props.append(pb_props)
 
@@ -247,7 +247,7 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
 
     if not training_data_exists:
         celltype_index = sig.columns
-        create_training_data(granja_meta, bulk.index, celltype_index, f"benchmark_data/benchmark2/")
+        create_training_data([granja_meta], bulk.index, cell_type_col="Cell_type (HSC)", cell_type_index=celltype_index, out_dir=f"benchmark_data/benchmark2/")
 
     # Ground truth must come from the original per-cell Lareau labels, not the
     # metacell-collapsed object (which caps every type at max_metacells_per_type
@@ -270,4 +270,4 @@ if __name__ == "__main__":
     if BENCHMARK1:
         create_benchmark1(sig_exists=False, bulk_exists=False, training_data_exists=True)
     if BENCHMARK2:
-        create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=True)
+        create_benchmark2(sig_exists=True, bulk_exists=True, training_data_exists=False)

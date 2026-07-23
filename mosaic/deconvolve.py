@@ -46,11 +46,10 @@ def elastic_net_deconvolve(signature_matrix: pd.DataFrame,
 def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
                      mixture_vector: pd.Series) -> pd.Series:
 
-    A = (signature_matrix.to_numpy(dtype=float))
     b = (mixture_vector.to_numpy(dtype=float))
 
     model = NuSVR(kernel='rbf', nu=0.5, C=1.0, gamma='scale')
-    model.fit(A, b)
+    model.fit(signature_matrix, b)
 
     results = permutation_importance(model, signature_matrix, mixture_vector, n_repeats=10)
     proportions = pd.Series(results.importances_mean, index=signature_matrix.columns)
@@ -67,18 +66,21 @@ def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props:
 
     print("Starting random forests deconvolution:\n")
     model = RandomForestRegressor(
-        n_estimators=25,
+        n_estimators=850,
+        max_depth=10,
         max_features=0.3,
-        min_samples_leaf=5,
         max_samples=0.7,
+        min_samples_leaf=6,
+        min_samples_split=10,
+        random_state=42,
         n_jobs=-1,
-        random_state=0,
     )
 
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,
-        test_size=0.2
+        test_size=0.2,
+        random_state=0
     )
 
     model.fit(X_train, y_train)
@@ -99,12 +101,13 @@ def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFra
     X_train, X_test, y_train, y_test = train_test_split(
         training_bulks,
         training_bulk_props,
-        test_size=0.2
+        test_size=0.2,
+        random_state=0
     )
 
     model = XGBRegressor(
         tree_method="hist",
-        n_estimators=25,
+        n_estimators=500,
         learning_rate=0.02,
         max_depth=5,
         subsample=0.7,
