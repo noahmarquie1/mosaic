@@ -9,8 +9,10 @@
       
       
       
-        <link rel="prev" href="../preprocessing/">
+        <link rel="prev" href="..">
       
+      
+        <link rel="next" href="../preprocessing/">
       
       
         
@@ -21,7 +23,7 @@
     
     
       
-        <title>Usage - Mosaic</title>
+        <title>Deconvolution - Mosaic</title>
       
     
     
@@ -62,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#usage" class="md-skip">
+        <a href="#deconvolution" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Usage
+              Deconvolution
             
           </span>
         </div>
@@ -218,10 +220,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../deconvolution/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deconvolution
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -237,6 +266,115 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#statistical-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistical Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistical Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nnls-nonnegative-least-squares" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NNLS — Nonnegative Least Squares
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elastic-net" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Elastic Net
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nu-svr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nu-SVR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supervisedcombinatorial-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supervised/Combinatorial Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised/Combinatorial Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-forests-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Forests Regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xgboost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        XGBoost
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -272,37 +410,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Usage
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
         
   
   
@@ -318,159 +429,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#preprocessing-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Preprocessing Data
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Preprocessing Data">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#loading-from-anndata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading from AnnData
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-from-fragments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading from Fragments
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#predicting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Predicting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Predicting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#non-negative-least-squares-nnls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Non Negative Least Squares - NNLS
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#elastic-net" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Elastic Net
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#support-vector-regression-nu-svr" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Support Vector Regression - Nu-SVR
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#random-forests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Random Forests
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#xgboost" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        XGBoost
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ensemble" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ensemble
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Evaluation
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -502,61 +460,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#preprocessing-data" class="md-nav__link">
+  <a href="#statistical-models" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Preprocessing Data
+        Statistical Models
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Preprocessing Data">
+    <nav class="md-nav" aria-label="Statistical Models">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#loading-from-anndata" class="md-nav__link">
+  <a href="#nnls-nonnegative-least-squares" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading from AnnData
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#loading-from-fragments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading from Fragments
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#predicting" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Predicting
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Predicting">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#non-negative-least-squares-nnls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Non Negative Least Squares - NNLS
+        NNLS — Nonnegative Least Squares
       
     </span>
   </a>
@@ -575,21 +494,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#support-vector-regression-nu-svr" class="md-nav__link">
+  <a href="#nu-svr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Support Vector Regression - Nu-SVR
+        Nu-SVR
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#random-forests" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supervisedcombinatorial-models" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Random Forests
+        Supervised/Combinatorial Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Supervised/Combinatorial Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-forests-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Forests Regression
       
     </span>
   </a>
@@ -607,30 +543,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#ensemble" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ensemble
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Evaluation
-      
-    </span>
-  </a>
   
 </li>
       
@@ -651,20 +565,14 @@
 
 
 
-<h1 id="usage">Usage</h1>
-<h2 id="preprocessing-data">Preprocessing Data</h2>
-<p>Reference data can be preprocessed from AnnData (h5/h5ad) format. Statistical models require the use of a signature matrix</p>
-<h3 id="loading-from-anndata">Loading from AnnData</h3>
-<h3 id="loading-from-fragments">Loading from Fragments</h3>
-<h2 id="predicting">Predicting</h2>
-<p>Predict cell-type proportions on ATAC-seq data using a single model, or using a consensus prediction from multiple models.</p>
-<h3 id="non-negative-least-squares-nnls">Non Negative Least Squares - NNLS</h3>
+<h1 id="deconvolution">Deconvolution</h1>
+<h2 id="statistical-models">Statistical Models</h2>
+<h3 id="nnls-nonnegative-least-squares">NNLS — Nonnegative Least Squares</h3>
 <h3 id="elastic-net">Elastic Net</h3>
-<h3 id="support-vector-regression-nu-svr">Support Vector Regression - Nu-SVR</h3>
-<h3 id="random-forests">Random Forests</h3>
+<h3 id="nu-svr">Nu-SVR</h3>
+<h2 id="supervisedcombinatorial-models">Supervised/Combinatorial Models</h2>
+<h3 id="random-forests-regression">Random Forests Regression</h3>
 <h3 id="xgboost">XGBoost</h3>
-<h3 id="ensemble">Ensemble</h3>
-<h2 id="evaluation">Evaluation</h2>
 
 
 
