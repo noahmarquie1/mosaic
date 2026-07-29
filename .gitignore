@@ -7,3 +7,4 @@ site/
 eval_data/
 *.csv
 *.tsv
+*.DS_Store

@@ -2,11 +2,12 @@ import pandas as pd
 from scipy.optimize import nnls
 from sklearn.linear_model import ElasticNet
 from sklearn.svm import NuSVR
+from sklearn.multioutput import MultiOutputRegressor
 import scanpy as sc
 import numpy as np
 
 from sklearn.inspection import permutation_importance
-from xgboost import XGBRegressor
+import xgboost as xgb
 from sklearn.model_selection import train_test_split
 
 from sklearn.ensemble import RandomForestRegressor
@@ -61,12 +62,12 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
     return proportions
 
 
-def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
+def rf_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
                        mixture_vector: pd.Series) -> pd.Series:
 
     print("Starting random forests deconvolution:\n")
     model = RandomForestRegressor(
-        n_estimators=850,
+        n_estimators=20,
         max_depth=10,
         max_features=0.3,
         max_samples=0.7,
@@ -87,50 +88,41 @@ def random_forests_deconvolve(training_bulks: pd.DataFrame, training_bulk_props:
 
     mixture_vector = mixture_vector.to_frame().T
     y_pred = model.predict(mixture_vector)
+    y_pred = np.clip(y_pred, a_min=0, a_max=None)
+    epsilon = 1e-8
+    row_sums = y_pred.sum(axis=1, keepdims=True)
+    y_pred = y_pred / (row_sums + epsilon)
+
     y_pred = pd.Series(y_pred[0], index=training_bulk_props.columns)
     print("Finished random forests deconvolution.\n")
 
     return y_pred
 
 
-def xgb_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
-                       mixture_vector: pd.Series) -> pd.Series:
-
+def xgb_deconvolve(X_train, y_train, X_bulk):
     print("Starting xgboost deconvolution:\n")
+    params = {
+        'n_estimators': 50,
+        'objective': 'reg:squarederror',
+        'subsample': 0.8,
+        'colsample_bytree': 0.7,
+        'reg_alpha': 0.1,
+        'reg_lambda': 1.0,
+        'learning_rate': 0.02,
+        'random_state': 42
+    }
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        training_bulks,
-        training_bulk_props,
-        test_size=0.2,
-        random_state=0
-    )
+    base_xgb = xgb.XGBRegressor(**params)
+    multi_xgb = MultiOutputRegressor(base_xgb)
+    multi_xgb.fit(X_train, y_train)
 
-    model = XGBRegressor(
-        tree_method="hist",
-        n_estimators=500,
-        learning_rate=0.02,
-        max_depth=5,
-        subsample=0.7,
-        colsample_bytree=0.4,
-        min_child_weight=5,
-        reg_lambda=2.0,
-        n_jobs=-1,
-        random_state=0,
-        eval_metric="rmse",
-        early_stopping_rounds=50,
-    )
+    X_bulk = X_bulk.to_frame().T
+    raw_predictions = multi_xgb.predict(X_bulk)
 
-    mixture_vector = mixture_vector.to_frame().T
-    model.fit(X_train, y_train, verbose=10, eval_set=[(X_test, y_test)])
-    y_pred = model.predict(mixture_vector)
-    y_pred = pd.Series(y_pred[0], index=training_bulk_props.columns)
+    non_negative_preds = np.clip(raw_predictions, a_min=0, a_max=None)
+    normalized_predictions = non_negative_preds / (non_negative_preds.sum(axis=1, keepdims=True) + 1e-8)
+    y_pred = pd.Series(normalized_predictions[0], index=y_train.columns)
 
-    y_pred = y_pred.clip(lower=0)
-    total = y_pred.sum()
-    if total > 0:
-        y_pred = y_pred / total
-
-    print("Finished xgboost deconvolution.\n")
     return y_pred
 
 
@@ -148,10 +140,3 @@ def print_proportions(proportions: pd.Series, top_n=None):
 
     print("─" * 35)
     print(f"  {'Total':<25} {proportions.sum():.4f}")
-
-
-if __name__ == "__main__":
-    s1_adata = sc.read_h5ad("eval_data/granja/pbmc/h5ad/Granja2019-peripheral_blood_mononuclear_cells-D10T1.h5ad")
-    print(s1_adata.var[:5])
-    print(s1_adata.obs.columns)
-    print(s1_adata.obs['cluster_label'][:5])

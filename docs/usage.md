@@ -1,8 +1,8 @@
 # Usage
 
-## Loading Data
+## Preprocessing Data
 
-Load ATAC-seq data via AnnData (h5ad preferred), or directly from fragments. 
+Reference data can be preprocessed from AnnData (h5/h5ad) format. 
 
 ### Loading from AnnData
 

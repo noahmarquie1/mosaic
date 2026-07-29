@@ -99,7 +99,7 @@ def create_training_data(training_samples, peaks, cell_type_index, cell_type_col
 
     for sample in training_samples:
         sample = sample.to_memory() if sample.isbacked else sample
-        pb, pb_props = generate_training_pseudobulks(sample, peaks, cell_type_index=cell_type_index, cell_type_col=cell_type_col, n_pseudobulks=10_000)
+        pb, pb_props = generate_training_pseudobulks(sample, peaks, cell_type_index=cell_type_index, cell_type_col=cell_type_col, n_pseudobulks=60_000)
         training_pb.append(pb)
         training_pb_props.append(pb_props)
 
@@ -217,8 +217,7 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
     sc.pp.log1p(combined)
     sc.pp.combat(combined, key="study", covariates=["Cell_type (HSC)"])  # preserve cell-type signal
     combined.X = np.expm1(combined.X)
-
-    combined.X[combined.X < 0] = 0 # Removes negative values
+    combined.X[combined.X < 0] = 0
 
     granja_meta = combined[combined.obs["study"] == "Granja"].copy()
     lareau_meta = combined[combined.obs["study"] == "Lareau"].copy()
@@ -249,9 +248,6 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
         celltype_index = sig.columns
         create_training_data([granja_meta], bulk.index, cell_type_col="Cell_type (HSC)", cell_type_index=celltype_index, out_dir=f"benchmark_data/benchmark2/")
 
-    # Ground truth must come from the original per-cell Lareau labels, not the
-    # metacell-collapsed object (which caps every type at max_metacells_per_type
-    # and would otherwise flatten true abundance differences to near-uniform).
     true_props = get_adata_proportions(
         lareau_sample,
         "Cell_type (HSC)",
@@ -262,12 +258,11 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
     true_props.to_csv(f"benchmark_data/benchmark2/true_proportions.csv")
 
 
-
-BENCHMARK1 = False
-BENCHMARK2 = True
+BENCHMARK1 = True
+BENCHMARK2 = False
 
 if __name__ == "__main__":
     if BENCHMARK1:
-        create_benchmark1(sig_exists=False, bulk_exists=False, training_data_exists=True)
+        create_benchmark1(sig_exists=False, bulk_exists=False, training_data_exists=False)
     if BENCHMARK2:
         create_benchmark2(sig_exists=True, bulk_exists=True, training_data_exists=False)
