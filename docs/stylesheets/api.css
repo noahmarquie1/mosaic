@@ -1,0 +1,49 @@
+/* Typography for the mkdocstrings-generated API reference.
+   mkdocstrings has no font-size option, so the sizing lives here. Scoped to
+   .doc-* classes so prose on the rest of the page keeps the theme defaults. */
+
+/* Docstring body: description, Notes, Examples. */
+.doc-contents {
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+/* Parameters / Returns tables. */
+.doc-contents table {
+  font-size: 0.68rem;
+}
+
+.doc-contents table td,
+.doc-contents table th {
+  padding: 0.35em 0.6em;
+}
+
+/* Rendered signature block (separate_signature: true). */
+.doc-signature,
+.doc-contents .highlight pre {
+  font-size: 0.66rem;
+}
+
+/* Symbol headings -- keep them clearly above the body text but not oversized. */
+h3.doc-heading,
+h4.doc-heading,
+h5.doc-heading {
+  font-size: 0.85rem;
+  margin-top: 1.4em;
+}
+
+/* Parameter names and other inline code inside docstrings. */
+.doc-contents code {
+  font-size: 0.9em;
+}
+
+/* The "func"/"attr" chip from show_symbol_type_heading. */
+.doc-symbol {
+  font-size: 0.62rem;
+}
+
+/* Visually separate each documented object from the previous one. */
+.doc-object {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  padding-top: 0.6em;
+}

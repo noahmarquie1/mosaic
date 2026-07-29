@@ -8,7 +8,7 @@ import scipy.sparse as sp
 import anndata as ad
 import numpy as np
 
-celltype_index: pd.Series = pd.read_csv("eval_data/celltype_mapping.csv").set_index("original_label")["mapped_label"]
+celltype_index: pd.Series = pd.read_csv("benchmark_data/celltype_mapping.csv").set_index("original_label")["mapped_label"]
 celltype_mapping = celltype_index.to_dict()
 
 bone_marrow_labels = {
@@ -99,7 +99,7 @@ def create_training_data(training_samples, peaks, cell_type_index, cell_type_col
 
     for sample in training_samples:
         sample = sample.to_memory() if sample.isbacked else sample
-        pb, pb_props = generate_training_pseudobulks(sample, peaks, cell_type_index=cell_type_index, cell_type_col=cell_type_col, n_pseudobulks=60_000)
+        pb, pb_props = generate_training_pseudobulks(sample, peaks, cell_type_index=cell_type_index, cell_type_col=cell_type_col, n_pseudobulks=200_000)
         training_pb.append(pb)
         training_pb_props.append(pb_props)
 
@@ -258,8 +258,8 @@ def create_benchmark2(sig_exists=False, bulk_exists=False, training_data_exists=
     true_props.to_csv(f"benchmark_data/benchmark2/true_proportions.csv")
 
 
-BENCHMARK1 = True
-BENCHMARK2 = False
+BENCHMARK1 = False
+BENCHMARK2 = True
 
 if __name__ == "__main__":
     if BENCHMARK1:

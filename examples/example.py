@@ -4,7 +4,7 @@ from mosaic.evaluate import evaluate_deconvolution
 import matplotlib.pyplot as plt
 import numpy as np
 
-celltype_index: pd.Series = pd.read_csv("eval_data/celltype_mapping.csv").set_index("original_label")["mapped_label"]
+celltype_index: pd.Series = pd.read_csv("benchmark_data/celltype_mapping.csv").set_index("original_label")["mapped_label"]
 
 target_index: pd.Index = pd.Index(celltype_index.unique())
 celltype_mapping = celltype_index.to_dict()
@@ -114,8 +114,8 @@ def do_benchmark2():
     rf_results[0] = (0, forests_eval['correlation'])
     xgb_results[0] = (0, xgb_eval['correlation'])
 
-BENCHMARK1 = True
-BENCHMARK2 = False
+BENCHMARK1 = False
+BENCHMARK2 = True
 
 if __name__ == "__main__":
     if BENCHMARK1:

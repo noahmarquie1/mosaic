@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]  # >=77 for PEP 639 SPDX `license` / `license-files`
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,8 @@ name = "mosaic"
 version = "0.1.0"
 description = "A systematic benchmark of machine learning methods for bulk ATAC-seq deconvolution. Using DeconPeaker's preprocessing pipeline as a fixed foundation, we evaluate a range of approaches — from regularized regression to gradient boosting and constrained neural networks — to ask how much model complexity chromatin accessibility deconvolution actually requires."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = [
     "matplotlib==3.10.8",

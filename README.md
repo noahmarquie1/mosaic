@@ -32,3 +32,7 @@ The signature matrices, bulk matrices and true proportions for each benchmark ar
 2. For *Benchmark 2*, we construct a signature matrix from 16 samples in Satpathy, and estimate proportions of the remaining sample in Satpathy, repeating until the proportions of all 17 samples are estimated
 3. For *Benchmark 3*, we construct a signature matrix from 5 samples in Granja, and we average results from single-sample predictions among 17 samples in Satpathy
 4. For *Benchmark 4*, we construct a signature matrix from 17 samples in Satpathy, and average results from single-sample predictions among 5 samples in Granja
+
+## License
+
+Mosaic is released under the [MIT License](LICENSE).

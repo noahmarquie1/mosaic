@@ -1,5 +1,55 @@
 site_name: Mosaic
 theme:
+  logo: logo.png
   name: material
+  favicon: icon.png
+  features:
+  - content.code.copy
+  - navigation.instant
+  - toc.follow
 extra:
   generator: false
+extra_css:
+- stylesheets/api.css
+markdown_extensions:
+- admonition
+- attr_list
+- pymdownx.details
+- pymdownx.superfences
+- pymdownx.highlight:
+    anchor_linenums: true
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          # --- Docstring parsing ---
+          docstring_style: numpy
+          docstring_section_style: table   # Parameters/Returns render as tables
+          merge_init_into_class: true
+          show_if_no_docstring: false
+
+          # --- Headings ---
+          show_root_heading: true          # Shows the function name as a heading
+          show_root_full_path: false       # ...as `generate_signature_matrix`, not the dotted path
+          show_symbol_type_heading: true   # "func"/"class" chip beside the heading
+          show_symbol_type_toc: true
+          heading_level: 3                 # Nests under the ## sections in the .md pages
+          parameter_headings: false
+
+          # --- Signature ---
+          separate_signature: true         # Signature in its own code block, not inline in the heading
+          show_signature_annotations: true # Shows type hints in the signature
+          signature_crossrefs: true        # Type hints link to their own docs
+          line_length: 72                  # Wraps the rendered signature instead of one long line
+
+          # --- Body ---
+          show_source: true               # Hides the "Source code" fold-out
+          show_labels: false
+          show_docstring_examples: true
+          members_order: source
+nav:
+- Getting Started: index.md
+- Preprocessing: preprocessing.md
+- Deconvolution: deconvolution.md
