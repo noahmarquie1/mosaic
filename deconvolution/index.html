@@ -84,7 +84,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="Mosaic" class="md-header__button md-logo" aria-label="Mosaic" data-md-component="logo">
       
-  <img src="../logo.png" alt="logo">
+  <img src="../icon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -181,7 +181,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Mosaic" class="md-nav__button md-logo" aria-label="Mosaic" data-md-component="logo">
       
-  <img src="../logo.png" alt="logo">
+  <img src="../icon.png" alt="logo">
 
     </a>
     Mosaic
@@ -1271,7 +1271,7 @@ the slowest of the statistical models.</p>
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">rf_deconvolve</span><span class="p">(</span><span class="n">training_bulks</span><span class="p">:</span> <span class="n"><span title="pandas.DataFrame">DataFrame</span></span><span class="p">,</span> <span class="n">training_bulk_props</span><span class="p">:</span> <span class="n"><span title="pandas.DataFrame">DataFrame</span></span><span class="p">,</span> <span class="n">mixture_vector</span><span class="p">:</span> <span class="n"><span title="pandas.Series">Series</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pandas.Series">Series</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">rf_deconvolve</span><span class="p">(</span><span class="n">training_bulks</span><span class="p">:</span> <span class="n"><span title="pandas.DataFrame">DataFrame</span></span><span class="p">,</span> <span class="n">training_bulk_props</span><span class="p">:</span> <span class="n"><span title="pandas.DataFrame">DataFrame</span></span><span class="p">,</span> <span class="n">mixture_vector</span><span class="p">:</span> <span class="n"><span title="pandas.Series">Series</span></span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pandas.Series">Series</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -1457,8 +1457,13 @@ on 80% of the pseudobulks.</p>
 <span class="normal"><a href="#__codelineno-0-225">225</a></span>
 <span class="normal"><a href="#__codelineno-0-226">226</a></span>
 <span class="normal"><a href="#__codelineno-0-227">227</a></span>
-<span class="normal"><a href="#__codelineno-0-228">228</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-158" name="__codelineno-0-158"></a><span class="k">def</span><span class="w"> </span><span class="nf">rf_deconvolve</span><span class="p">(</span><span class="n">training_bulks</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">training_bulk_props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-<a id="__codelineno-0-159" name="__codelineno-0-159"></a>                       <span class="n">mixture_vector</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-228">228</a></span>
+<span class="normal"><a href="#__codelineno-0-229">229</a></span>
+<span class="normal"><a href="#__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#__codelineno-0-233">233</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-158" name="__codelineno-0-158"></a><span class="k">def</span><span class="w"> </span><span class="nf">rf_deconvolve</span><span class="p">(</span><span class="n">training_bulks</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">training_bulk_props</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+<a id="__codelineno-0-159" name="__codelineno-0-159"></a>                       <span class="n">mixture_vector</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <a id="__codelineno-0-160" name="__codelineno-0-160"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Deconvolve a bulk mixture with a multi-output random forest.</span>
 <a id="__codelineno-0-161" name="__codelineno-0-161"></a>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a><span class="sd">    The first of the supervised models: instead of solving against a signature</span>
@@ -1497,37 +1502,42 @@ on 80% of the pseudobulks.</p>
 <a id="__codelineno-0-195" name="__codelineno-0-195"></a><span class="sd">    on 80% of the pseudobulks.</span>
 <a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-197" name="__codelineno-0-197"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting random forests deconvolution:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-198" name="__codelineno-0-198"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
-<a id="__codelineno-0-199" name="__codelineno-0-199"></a>        <span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<a id="__codelineno-0-200" name="__codelineno-0-200"></a>        <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<a id="__codelineno-0-201" name="__codelineno-0-201"></a>        <span class="n">max_features</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-<a id="__codelineno-0-202" name="__codelineno-0-202"></a>        <span class="n">max_samples</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-<a id="__codelineno-0-203" name="__codelineno-0-203"></a>        <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-<a id="__codelineno-0-204" name="__codelineno-0-204"></a>        <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<a id="__codelineno-0-205" name="__codelineno-0-205"></a>        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-<a id="__codelineno-0-206" name="__codelineno-0-206"></a>        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-207" name="__codelineno-0-207"></a>    <span class="p">)</span>
-<a id="__codelineno-0-208" name="__codelineno-0-208"></a>
-<a id="__codelineno-0-209" name="__codelineno-0-209"></a>    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-<a id="__codelineno-0-210" name="__codelineno-0-210"></a>        <span class="n">training_bulks</span><span class="p">,</span>
-<a id="__codelineno-0-211" name="__codelineno-0-211"></a>        <span class="n">training_bulk_props</span><span class="p">,</span>
-<a id="__codelineno-0-212" name="__codelineno-0-212"></a>        <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-<a id="__codelineno-0-213" name="__codelineno-0-213"></a>        <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span>
-<a id="__codelineno-0-214" name="__codelineno-0-214"></a>    <span class="p">)</span>
-<a id="__codelineno-0-215" name="__codelineno-0-215"></a>
-<a id="__codelineno-0-216" name="__codelineno-0-216"></a>    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<a id="__codelineno-0-217" name="__codelineno-0-217"></a>
-<a id="__codelineno-0-218" name="__codelineno-0-218"></a>    <span class="n">mixture_vector</span> <span class="o">=</span> <span class="n">mixture_vector</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-<a id="__codelineno-0-219" name="__codelineno-0-219"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">mixture_vector</span><span class="p">)</span>
-<a id="__codelineno-0-220" name="__codelineno-0-220"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<a id="__codelineno-0-221" name="__codelineno-0-221"></a>    <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-8</span>
-<a id="__codelineno-0-222" name="__codelineno-0-222"></a>    <span class="n">row_sums</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-0-223" name="__codelineno-0-223"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span> <span class="o">/</span> <span class="p">(</span><span class="n">row_sums</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
-<a id="__codelineno-0-224" name="__codelineno-0-224"></a>
-<a id="__codelineno-0-225" name="__codelineno-0-225"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">training_bulk_props</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<a id="__codelineno-0-226" name="__codelineno-0-226"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished random forests deconvolution.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-227" name="__codelineno-0-227"></a>
-<a id="__codelineno-0-228" name="__codelineno-0-228"></a>    <span class="k">return</span> <span class="n">y_pred</span>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a>    <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-199" name="__codelineno-0-199"></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a>            <span class="n">n_estimators</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a>            <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a>            <span class="n">max_features</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a>            <span class="n">max_samples</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a>            <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a>            <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<a id="__codelineno-0-206" name="__codelineno-0-206"></a>            <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<a id="__codelineno-0-207" name="__codelineno-0-207"></a>            <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-0-208" name="__codelineno-0-208"></a>        <span class="p">)</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>            <span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+<a id="__codelineno-0-212" name="__codelineno-0-212"></a>            <span class="n">max_depth</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>            <span class="n">max_features</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">training_bulks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a>            <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>            <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<a id="__codelineno-0-216" name="__codelineno-0-216"></a>            <span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-217" name="__codelineno-0-217"></a>            <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-0-218" name="__codelineno-0-218"></a>            <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<a id="__codelineno-0-219" name="__codelineno-0-219"></a>        <span class="p">)</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a>
+<a id="__codelineno-0-221" name="__codelineno-0-221"></a>    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_bulks</span><span class="p">,</span> <span class="n">training_bulk_props</span><span class="p">)</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>    <span class="n">mixture_vector</span> <span class="o">=</span> <span class="n">mixture_vector</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">mixture_vector</span><span class="p">)</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a>    <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-8</span>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="n">row_sums</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-228" name="__codelineno-0-228"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span> <span class="o">/</span> <span class="p">(</span><span class="n">row_sums</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
+<a id="__codelineno-0-229" name="__codelineno-0-229"></a>
+<a id="__codelineno-0-230" name="__codelineno-0-230"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">training_bulk_props</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<a id="__codelineno-0-231" name="__codelineno-0-231"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished random forests deconvolution.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-232" name="__codelineno-0-232"></a>
+<a id="__codelineno-0-233" name="__codelineno-0-233"></a>    <span class="k">return</span> <span class="n">y_pred</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1543,7 +1553,7 @@ on 80% of the pseudobulks.</p>
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">xgb_deconvolve</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_bulk</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">xgb_deconvolve</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_bulk</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -1657,12 +1667,7 @@ benchmark to train.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>mosaic/deconvolve.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-231">231</a></span>
-<span class="normal"><a href="#__codelineno-0-232">232</a></span>
-<span class="normal"><a href="#__codelineno-0-233">233</a></span>
-<span class="normal"><a href="#__codelineno-0-234">234</a></span>
-<span class="normal"><a href="#__codelineno-0-235">235</a></span>
-<span class="normal"><a href="#__codelineno-0-236">236</a></span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-236">236</a></span>
 <span class="normal"><a href="#__codelineno-0-237">237</a></span>
 <span class="normal"><a href="#__codelineno-0-238">238</a></span>
 <span class="normal"><a href="#__codelineno-0-239">239</a></span>
@@ -1716,66 +1721,99 @@ benchmark to train.</p>
 <span class="normal"><a href="#__codelineno-0-287">287</a></span>
 <span class="normal"><a href="#__codelineno-0-288">288</a></span>
 <span class="normal"><a href="#__codelineno-0-289">289</a></span>
-<span class="normal"><a href="#__codelineno-0-290">290</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-231" name="__codelineno-0-231"></a><span class="k">def</span><span class="w"> </span><span class="nf">xgb_deconvolve</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_bulk</span><span class="p">):</span>
-<a id="__codelineno-0-232" name="__codelineno-0-232"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Deconvolve a bulk mixture with gradient-boosted trees.</span>
-<a id="__codelineno-0-233" name="__codelineno-0-233"></a>
-<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="sd">    Like [`rf_deconvolve`][mosaic.deconvolve.rf_deconvolve], this learns from</span>
-<a id="__codelineno-0-235" name="__codelineno-0-235"></a><span class="sd">    simulated pseudobulks rather than a signature matrix, but replaces bagging</span>
-<a id="__codelineno-0-236" name="__codelineno-0-236"></a><span class="sd">    with boosting: an ``XGBRegressor`` wrapped in ``MultiOutputRegressor``, so</span>
-<a id="__codelineno-0-237" name="__codelineno-0-237"></a><span class="sd">    one independent booster is fit per cell type. Predictions are clipped at zero</span>
-<a id="__codelineno-0-238" name="__codelineno-0-238"></a><span class="sd">    and renormalized, as the per-cell-type boosters know nothing about each other</span>
-<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="sd">    and have no reason to produce a vector that sums to one.</span>
-<a id="__codelineno-0-240" name="__codelineno-0-240"></a>
-<a id="__codelineno-0-241" name="__codelineno-0-241"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-242" name="__codelineno-0-242"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-243" name="__codelineno-0-243"></a><span class="sd">    X_train : pandas.DataFrame</span>
-<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="sd">        Training pseudobulks, one row per mixture, columns being peaks.</span>
-<a id="__codelineno-0-245" name="__codelineno-0-245"></a><span class="sd">    y_train : pandas.DataFrame</span>
-<a id="__codelineno-0-246" name="__codelineno-0-246"></a><span class="sd">        Ground-truth proportions aligned row-wise with ``X_train``; its columns</span>
-<a id="__codelineno-0-247" name="__codelineno-0-247"></a><span class="sd">        define the cell types of the output.</span>
-<a id="__codelineno-0-248" name="__codelineno-0-248"></a><span class="sd">    X_bulk : pandas.Series</span>
-<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="sd">        The bulk profile to deconvolve, indexed by the same peaks as ``X_train``.</span>
-<a id="__codelineno-0-250" name="__codelineno-0-250"></a>
-<a id="__codelineno-0-251" name="__codelineno-0-251"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-252" name="__codelineno-0-252"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-253" name="__codelineno-0-253"></a><span class="sd">    pandas.Series</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="sd">        Estimated proportions indexed by ``y_train.columns``, summing to 1.</span>
+<span class="normal"><a href="#__codelineno-0-290">290</a></span>
+<span class="normal"><a href="#__codelineno-0-291">291</a></span>
+<span class="normal"><a href="#__codelineno-0-292">292</a></span>
+<span class="normal"><a href="#__codelineno-0-293">293</a></span>
+<span class="normal"><a href="#__codelineno-0-294">294</a></span>
+<span class="normal"><a href="#__codelineno-0-295">295</a></span>
+<span class="normal"><a href="#__codelineno-0-296">296</a></span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-236" name="__codelineno-0-236"></a><span class="k">def</span><span class="w"> </span><span class="nf">xgb_deconvolve</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">X_bulk</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<a id="__codelineno-0-237" name="__codelineno-0-237"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Deconvolve a bulk mixture with gradient-boosted trees.</span>
+<a id="__codelineno-0-238" name="__codelineno-0-238"></a>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="sd">    Like [`rf_deconvolve`][mosaic.deconvolve.rf_deconvolve], this learns from</span>
+<a id="__codelineno-0-240" name="__codelineno-0-240"></a><span class="sd">    simulated pseudobulks rather than a signature matrix, but replaces bagging</span>
+<a id="__codelineno-0-241" name="__codelineno-0-241"></a><span class="sd">    with boosting: an ``XGBRegressor`` wrapped in ``MultiOutputRegressor``, so</span>
+<a id="__codelineno-0-242" name="__codelineno-0-242"></a><span class="sd">    one independent booster is fit per cell type. Predictions are clipped at zero</span>
+<a id="__codelineno-0-243" name="__codelineno-0-243"></a><span class="sd">    and renormalized, as the per-cell-type boosters know nothing about each other</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="sd">    and have no reason to produce a vector that sums to one.</span>
+<a id="__codelineno-0-245" name="__codelineno-0-245"></a>
+<a id="__codelineno-0-246" name="__codelineno-0-246"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-247" name="__codelineno-0-247"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-248" name="__codelineno-0-248"></a><span class="sd">    X_train : pandas.DataFrame</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="sd">        Training pseudobulks, one row per mixture, columns being peaks.</span>
+<a id="__codelineno-0-250" name="__codelineno-0-250"></a><span class="sd">    y_train : pandas.DataFrame</span>
+<a id="__codelineno-0-251" name="__codelineno-0-251"></a><span class="sd">        Ground-truth proportions aligned row-wise with ``X_train``; its columns</span>
+<a id="__codelineno-0-252" name="__codelineno-0-252"></a><span class="sd">        define the cell types of the output.</span>
+<a id="__codelineno-0-253" name="__codelineno-0-253"></a><span class="sd">    X_bulk : pandas.Series</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="sd">        The bulk profile to deconvolve, indexed by the same peaks as ``X_train``.</span>
 <a id="__codelineno-0-255" name="__codelineno-0-255"></a>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a><span class="sd">    Notes</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="sd">    -----</span>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="sd">    Regularization is doing most of the work here: a low ``learning_rate`` (0.01)</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="sd">    over 200 rounds, row and column subsampling (0.8 / 0.7), and both L1 and L2</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="sd">    penalties, all to keep the boosters from fitting pseudobulk simulation</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    artifacts.</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    Fitting is ``n_cell_types`` separate models, so cost scales linearly with the</span>
-<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">    number of columns in ``y_train`` -- this is the most expensive model in the</span>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">    benchmark to train.</span>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting xgboost deconvolution:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-268" name="__codelineno-0-268"></a>    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a>        <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a>        <span class="s1">&#39;objective&#39;</span><span class="p">:</span> <span class="s1">&#39;reg:squarederror&#39;</span><span class="p">,</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a>        <span class="s1">&#39;subsample&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a>        <span class="s1">&#39;colsample_bytree&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a>        <span class="s1">&#39;reg_alpha&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a>        <span class="s1">&#39;reg_lambda&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>        <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a>        <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a>    <span class="p">}</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a>    <span class="n">base_xgb</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>    <span class="n">multi_xgb</span> <span class="o">=</span> <span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">base_xgb</span><span class="p">)</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>    <span class="n">multi_xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a>    <span class="n">X_bulk</span> <span class="o">=</span> <span class="n">X_bulk</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="n">raw_predictions</span> <span class="o">=</span> <span class="n">multi_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_bulk</span><span class="p">)</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>    <span class="n">non_negative_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">raw_predictions</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>    <span class="n">normalized_predictions</span> <span class="o">=</span> <span class="n">non_negative_preds</span> <span class="o">/</span> <span class="p">(</span><span class="n">non_negative_preds</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">normalized_predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">y_train</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>    <span class="k">return</span> <span class="n">y_pred</span>
+<a id="__codelineno-0-256" name="__codelineno-0-256"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="sd">    pandas.Series</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="sd">        Estimated proportions indexed by ``y_train.columns``, summing to 1.</span>
+<a id="__codelineno-0-260" name="__codelineno-0-260"></a>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    Notes</span>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="sd">    -----</span>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    Regularization is doing most of the work here: a low ``learning_rate`` (0.01)</span>
+<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">    over 200 rounds, row and column subsampling (0.8 / 0.7), and both L1 and L2</span>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">    penalties, all to keep the boosters from fitting pseudobulk simulation</span>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">    artifacts.</span>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">    Fitting is ``n_cell_types`` separate models, so cost scales linearly with the</span>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="sd">    number of columns in ``y_train`` -- this is the most expensive model in the</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">    benchmark to train.</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting xgboost deconvolution:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a>    <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a>        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>            <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>            <span class="s1">&#39;objective&#39;</span><span class="p">:</span> <span class="s1">&#39;reg:squarederror&#39;</span><span class="p">,</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a>            <span class="s1">&#39;subsample&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a>            <span class="s1">&#39;colsample_bytree&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>            <span class="s1">&#39;reg_alpha&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a>            <span class="s1">&#39;reg_lambda&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>            <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>            <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>        <span class="p">}</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>            <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>            <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>            <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>            <span class="s1">&#39;subsample&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>            <span class="s1">&#39;colsample_bytree&#39;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>            <span class="s1">&#39;min_child_weight&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>            <span class="s1">&#39;reg_lambda&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>            <span class="s1">&#39;reg_alpha&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>            <span class="s1">&#39;tree_method&#39;</span><span class="p">:</span> <span class="s2">&quot;hist&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>            <span class="s1">&#39;n_jobs&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>        <span class="p">}</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>    <span class="n">base_xgb</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>    <span class="n">multi_xgb</span> <span class="o">=</span> <span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">base_xgb</span><span class="p">)</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>    <span class="n">multi_xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>    <span class="n">X_bulk</span> <span class="o">=</span> <span class="n">X_bulk</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="n">raw_predictions</span> <span class="o">=</span> <span class="n">multi_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_bulk</span><span class="p">)</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>    <span class="n">non_negative_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">raw_predictions</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>    <span class="n">normalized_predictions</span> <span class="o">=</span> <span class="n">non_negative_preds</span> <span class="o">/</span> <span class="p">(</span><span class="n">non_negative_preds</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">normalized_predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">y_train</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>    <span class="k">return</span> <span class="n">y_pred</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
