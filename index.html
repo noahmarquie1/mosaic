@@ -607,9 +607,11 @@
 <h1 id="getting-started">Getting Started</h1>
 <p>Mosaic is a systematic benchmark and suite of machine learning methods for bulk ATAC-seq deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.</p>
 <h2 id="project-structure">Project Structure</h2>
-<p>Mosaic is composed of two main parts:
-1. Preprocessing
-2. Deconvolution</p>
+<p>Mosaic is composed of two main parts:</p>
+<ol>
+<li>Preprocessing</li>
+<li>Deconvolution</li>
+</ol>
 <p>The preprocessing module provides tools for building signature matrices, bulk mixtures and pseudobulks directly from AnnData format using SciPy, while the deconvolution module provides functionality to perform deconvolution using any of the five benchmarked ML algorithms</p>
 <h2 id="benchmarks">Benchmarks</h2>
 <p>Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, provided by the Tsinghua Human scATAC-seq Corpus. We separate the data by sample (5 in the study), and perform five corresponding benchmarks, each where the ML models are trained using data from four samples, and a final sample is held out for evaluation. </p>
