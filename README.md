@@ -1,11 +1,9 @@
-<pre style="background: transparent; border: none; padding: 0; font-size: 1.3em;">
- __  __  ___  ____    _    ___ ____
-|  \/  |/ _ \/ ___|  / \  |_ _/ ___|
-| |\/| | | | \___ \ / _ \  | | |
-| |  | | |_| |___) / ___ \ | | |___
-|_|  |_|\___/|____/_/   \_\___\____|
-</pre>
-## Multi-method Open-chromatin Solver for ATAC-seq Inference of Composition
+![Mosaic Logo](mosaic_banner.png)
+
+<p align="center">
+  <h1>MOSAIC</h1>
+  <h3>Multi-Method Open Chromatin Solver for ATAC-seq Inference of Composition</h3>
+</p>
 
 A systematic benchmark and suite of machine learning methods for bulk ATAC-seq deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.
 
