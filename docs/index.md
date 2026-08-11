@@ -17,19 +17,34 @@ Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, pr
 
 ### Replicating Benchmarks
 
-To replicate benchmarks, first unzip the `benchmark_data` zip file provided in the repository. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
+Benchmark data is made available at [10.5281/zenodo.21882636](10.5281/zenodo.21882636). To replicate benchmarks, first unzip the `benchmark_data` zip file provided. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
 
 ### Overall Results
 
+![Overall benchmark results](benchmarks.png)
+
+The strongest models for deconvolution surveyed here are NNLS and XGBoost, with XGBoost performing slightly worse than NNLS for most evaluations, but significantly better in the final test. We conclude that combinatorial models do not provide a significant advantage to statistical models in basic deconvolution use cases, but remain viable alternatives, with XGBoost in particular competitive to the predominant deconvolution methods in the current literature. 
 
 ### Individual Results
 
+Below we provide individualized heatmaps for each of the five evaluations, showing the more nuanced patterns and biases for each model. For example, NNLS is often most accurate, except for strong peaks in areas with no true concentration. Additionally, Random Forests yields the flattest, safest proportion estimates of the five models. More patterns of this kind can be examined using the plots below.
+
 #### Benchmark 1
+
+![Benchmark 1 results](benchmark1_heatmap.png)
 
 #### Benchmark 2
 
+![Benchmark 2 results](benchmark2_heatmap.png)
+
 #### Benchmark 3
+
+![Benchmark 3 results](benchmark3_heatmap.png)
 
 #### Benchmark 4
 
+![Benchmark 4 results](benchmark4_heatmap.png)
+
 #### Benchmark 5
+
+![Benchmark 5 results](benchmark5_heatmap.png)

@@ -9,7 +9,7 @@
 
 A systematic benchmark and suite of machine learning methods for bulk ATAC-seq deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.
 
-For usage and replicating benchmarks, please refer to the [documentation](https://noahmarquie1.github.io/mosaic).
+Benchmark data is made available at [10.5281/zenodo.21882636](10.5281/zenodo.21882636). For usage and replicating benchmarks, please refer to the [documentation](https://noahmarquie1.github.io/mosaic).
 
 ## Methods Tested
 
@@ -23,7 +23,9 @@ For usage and replicating benchmarks, please refer to the [documentation](https:
 
 Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, provided by the Tsinghua Human scATAC-seq Corpus. We separate the data by sample (5 in the study), and perform five corresponding benchmarks, each where the ML models are trained using data from four samples, and a final sample is held out for evaluation. 
 
-The results from these benchmarks show that ...
+![Overall benchmark results](results/benchmarks.png)
+
+The strongest models for deconvolution surveyed here are NNLS and XGBoost, with XGBoost performing slightly worse than NNLS for most evaluations, but significantly better in the final test. We conclude that combinatorial models do not provide a significant advantage to statistical models in basic deconvolution use cases, but remain viable alternatives, with XGBoost in particular competitive to the predominant deconvolution methods in the current literature. 
 
 ## License
 
