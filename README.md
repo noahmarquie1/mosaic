@@ -1,12 +1,11 @@
 <div align="center">
-  <h1>MOSAIC</h1>
-  <h3>Multi-Method Open Chromatin Solver for ATAC-seq Inference of Composition</h3>
-  <img width="80%" src="mosaic_banner.png">
+  <img src="mosaic_banner.png">
+  <h1><b>MOSAIC:</b> Multi-Method Open Chromatin Solver for ATAC-seq Inference of Composition</h1>
 </div>
 
 A systematic benchmark and suite of machine learning methods for bulk ATAC-seq deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.
 
-Benchmark data is made available at [zenodo](https://doi.org/10.5281/zenodo.21882636). For usage and replicating benchmarks, please refer to the [documentation](https://noahmarquie1.github.io/mosaic).
+Benchmark data is made available at [zenodo](https://doi.org/10.5281/zenodo.21882636). Information on using the package, benchmark results, and replicating benchmarks is available in the [documentation](https://noahmarquie1.github.io/mosaic).
 
 ## Methods Tested
 
