@@ -18,7 +18,7 @@ Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, pr
 
 ### Replicating Benchmarks
 
-Benchmark data is made available at [zenodo](doi.org/10.5281/zenodo.21882636). To replicate benchmarks, first unzip the `benchmark_data` zip file provided. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
+Benchmark data is made available at [zenodo](https://doi.org/10.5281/zenodo.21882636). To replicate benchmarks, first unzip the `benchmark_data` zip file provided. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
 
 ### Overall Results
 
