@@ -614,15 +614,22 @@
 <h2 id="benchmarks">Benchmarks</h2>
 <p>Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, provided by the Tsinghua Human scATAC-seq Corpus. We separate the data by sample (5 in the study), and perform five corresponding benchmarks, each where the ML models are trained using data from four samples, and a final sample is held out for evaluation. </p>
 <h3 id="replicating-benchmarks">Replicating Benchmarks</h3>
-<p>To replicate benchmarks, first unzip the <code>benchmark_data</code> zip file provided in the repository. Then call <code>python generate_benchmarks.py</code> to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run <code>example.py</code> to run deconvolution on the generated examples, which will give comparable results to those reported below.</p>
+<p>Benchmark data is made available at <a href="10.5281/zenodo.21882636">10.5281/zenodo.21882636</a>. To replicate benchmarks, first unzip the <code>benchmark_data</code> zip file provided. Then call <code>python generate_benchmarks.py</code> to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run <code>example.py</code> to run deconvolution on the generated examples, which will give comparable results to those reported below.</p>
 <h3 id="overall-results">Overall Results</h3>
-<p><img alt="Description" src="benchmarks.png" /></p>
+<p><img alt="Overall benchmark results" src="benchmarks.png" /></p>
+<p>The strongest models for deconvolution surveyed here are NNLS and XGBoost, with XGBoost performing slightly worse than NNLS for most evaluations, but significantly better in the final test. We conclude that combinatorial models do not provide a significant advantage to statistical models in basic deconvolution use cases, but remain viable alternatives, with XGBoost in particular competitive to the predominant deconvolution methods in the current literature. </p>
 <h3 id="individual-results">Individual Results</h3>
+<p>Below we provide individualized heatmaps for each of the five evaluations, showing the more nuanced patterns and biases for each model. For example, NNLS is often most accurate, except for strong peaks in areas with no true concentration. Additionally, Random Forests yields the flattest, safest proportion estimates of the five models. More patterns of this kind can be examined using the plots below.</p>
 <h4 id="benchmark-1">Benchmark 1</h4>
+<p><img alt="Benchmark 1 results" src="benchmark1_heatmap.png" /></p>
 <h4 id="benchmark-2">Benchmark 2</h4>
+<p><img alt="Benchmark 2 results" src="benchmark2_heatmap.png" /></p>
 <h4 id="benchmark-3">Benchmark 3</h4>
+<p><img alt="Benchmark 3 results" src="benchmark3_heatmap.png" /></p>
 <h4 id="benchmark-4">Benchmark 4</h4>
+<p><img alt="Benchmark 4 results" src="benchmark4_heatmap.png" /></p>
 <h4 id="benchmark-5">Benchmark 5</h4>
+<p><img alt="Benchmark 5 results" src="benchmark5_heatmap.png" /></p>
 
 
 
