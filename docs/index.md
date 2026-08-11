@@ -1,11 +1,12 @@
 # Getting Started
 
 
-Mosaic is a systematic benchmark and suite of machine learning methods for bulk ATAC-seq deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.
+Mosaic is a systematic benchmark and suite of machine learning methods for ATAC-seq based Cell-Type Deconvolution. We evaluate a range of approaches — from Non-Negative Least Squares to XGBoost — to ask whether ML complexity necessarily translates to more accurate deconvolution results.
 
 ## Project Structure
 
 Mosaic is composed of two main parts:
+
 1. Preprocessing
 2. Deconvolution
 
@@ -17,7 +18,7 @@ Benchmarks were conducted using PBMC data from the study Granja et. al. 2019, pr
 
 ### Replicating Benchmarks
 
-Benchmark data is made available at [10.5281/zenodo.21882636](10.5281/zenodo.21882636). To replicate benchmarks, first unzip the `benchmark_data` zip file provided. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
+Benchmark data is made available at [zenodo](doi.org/10.5281/zenodo.21882636). To replicate benchmarks, first unzip the `benchmark_data` zip file provided. Then call `python generate_benchmarks.py` to generate signature matrices, bulk mixtures, and pseudobulks for each benchmark using the MOSAIC's preprocessing module. Finally, run `example.py` to run deconvolution on the generated examples, which will give comparable results to those reported below.
 
 ### Overall Results
 
