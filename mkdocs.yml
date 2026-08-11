@@ -1,6 +1,6 @@
 site_name: Mosaic
 theme:
-  logo: logo.png
+  logo: icon.png
   name: material
   favicon: icon.png
   features:

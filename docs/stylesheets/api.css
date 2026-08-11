@@ -47,3 +47,7 @@ h5.doc-heading {
   border-top: 1px solid var(--md-default-fg-color--lightest);
   padding-top: 0.6em;
 }
+
+.md-footer {
+  display: none;
+}

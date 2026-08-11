@@ -156,7 +156,7 @@ def nu_svr_deconvolve(signature_matrix: pd.DataFrame,
 
 
 def rf_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFrame,
-                       mixture_vector: pd.Series) -> pd.Series:
+                       mixture_vector: pd.Series, depth: int = 1) -> pd.Series:
     """Deconvolve a bulk mixture with a multi-output random forest.
 
     The first of the supervised models: instead of solving against a signature
@@ -195,25 +195,30 @@ def rf_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFram
     on 80% of the pseudobulks.
     """
     print("Starting random forests deconvolution:\n")
-    model = RandomForestRegressor(
-        n_estimators=20,
-        max_depth=10,
-        max_features=0.3,
-        max_samples=0.7,
-        min_samples_leaf=6,
-        min_samples_split=10,
-        random_state=42,
-        n_jobs=-1,
-    )
+    if depth == 0:
+        model = RandomForestRegressor(
+            n_estimators=2,
+            max_depth=10,
+            max_features=0.3,
+            max_samples=0.7,
+            min_samples_leaf=6,
+            min_samples_split=10,
+            random_state=42,
+            n_jobs=-1,
+        )
+    else:
+        model = RandomForestRegressor(
+            n_estimators=300,
+            max_depth=12,
+            max_features=int(np.sqrt(training_bulks.shape[1])),
+            min_samples_leaf=2,
+            min_samples_split=5,
+            bootstrap=True,
+            n_jobs=-1,
+            random_state=42,
+        )
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        training_bulks,
-        training_bulk_props,
-        test_size=0.2,
-        random_state=0
-    )
-
-    model.fit(X_train, y_train)
+    model.fit(training_bulks, training_bulk_props)
 
     mixture_vector = mixture_vector.to_frame().T
     y_pred = model.predict(mixture_vector)
@@ -228,7 +233,7 @@ def rf_deconvolve(training_bulks: pd.DataFrame, training_bulk_props: pd.DataFram
     return y_pred
 
 
-def xgb_deconvolve(X_train, y_train, X_bulk):
+def xgb_deconvolve(X_train, y_train, X_bulk, depth=1):
     """Deconvolve a bulk mixture with gradient-boosted trees.
 
     Like [`rf_deconvolve`][mosaic.deconvolve.rf_deconvolve], this learns from
@@ -265,16 +270,30 @@ def xgb_deconvolve(X_train, y_train, X_bulk):
     benchmark to train.
     """
     print("Starting xgboost deconvolution:\n")
-    params = {
-        'n_estimators': 200,
-        'objective': 'reg:squarederror',
-        'subsample': 0.8,
-        'colsample_bytree': 0.7,
-        'reg_alpha': 0.1,
-        'reg_lambda': 1.0,
-        'learning_rate': 0.01,
-        'random_state': 42
-    }
+    if depth == 0:
+        params = {
+            'n_estimators': 2,
+            'objective': 'reg:squarederror',
+            'subsample': 0.8,
+            'colsample_bytree': 0.7,
+            'reg_alpha': 0.1,
+            'reg_lambda': 1.0,
+            'learning_rate': 0.01,
+            'random_state': 42
+        }
+    else:
+        params = {
+            'n_estimators': 300,
+            'max_depth': 4,
+            'learning_rate': 0.05,
+            'subsample': 0.8,
+            'colsample_bytree': 0.6,
+            'min_child_weight': 3,
+            'reg_lambda': 1.0,
+            'reg_alpha': 0.1,
+            'tree_method': "hist",
+            'n_jobs': -1,
+        }
 
     base_xgb = xgb.XGBRegressor(**params)
     multi_xgb = MultiOutputRegressor(base_xgb)
